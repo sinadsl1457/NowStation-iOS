@@ -82,3 +82,12 @@ final class RideTrackerTests: XCTestCase {
         XCTAssertEqual(RideTexts.status(ride), "연결 끊김")
     }
 }
+
+final class LineSymbolTests: XCTestCase {
+    func test_호선은_숫자_그_밖의_노선은_첫_글자() {
+        XCTAssertEqual(lineSymbol("2호선"), "2")
+        XCTAssertEqual(lineSymbol("9호선"), "9")
+        XCTAssertEqual(lineSymbol("수인분당선"), "수")
+        XCTAssertEqual(lineSymbol("신분당선"), "신")
+    }
+}

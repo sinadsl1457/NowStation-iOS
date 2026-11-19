@@ -29,45 +29,64 @@ extension Color {
     }
 }
 
+/** 배지에 넣을 짧은 기호: "2호선" → "2", 그 밖의 노선은 첫 글자(수인분당선 → 수, 신분당선 → 신). */
+func lineSymbol(_ line: String) -> String {
+    if line.hasSuffix("호선"), let n = Int(line.dropLast(2)) { return String(n) }
+    return String(line.prefix(1))
+}
+
 /**
- * 한 역의 노선 칩들. 칩 하나는 줄어들거나 줄바꿈하지 않는다(좁은 폰에서 "2/호/선"으로 깨지던 문제).
- * [maxWidth] 안에 다 들어가면 칩으로, 아니면 노선 색 점만 보여 준다(역 이름 자리를 먼저 지킨다).
+ * 노선 배지: 노선색으로 채운 원 + 흰 기호. 폭이 모두 같아서 노선이 늘어도 자리를 미리 안다
+ * (이름 칩은 노선 이름 길이만큼 늘어 좁은 폰에서 깨졌다). 화면 읽기는 노선 이름으로 읽는다.
  */
-struct LineChips: View {
-    let lines: [String]
-    var maxWidth: CGFloat = 190
+struct LineBadge: View {
+    let line: String
+    var size: CGFloat = 24
 
     var body: some View {
-        ViewThatFits(in: .horizontal) {
-            HStack(spacing: 6) { ForEach(lines, id: \.self) { LineChip(line: $0) } }
-            HStack(spacing: 5) {
-                ForEach(lines, id: \.self) { Circle().fill(Color.line($0)).frame(width: 10, height: 10) }
-            }
-            .padding(.horizontal, 8).padding(.vertical, 7)
-            .background(.white, in: Capsule())
-            .overlay(Capsule().stroke(Color.hairline, lineWidth: 1))
-            .accessibilityElement(children: .ignore)
-            .accessibilityLabel(lines.joined(separator: ", "))
-        }
-        .frame(maxWidth: maxWidth, alignment: .trailing)
-        .fixedSize(horizontal: false, vertical: true)
+        let symbol = lineSymbol(line)
+        Text(symbol)
+            .font(.system(size: symbol.first?.isNumber == true ? 13 : 12, weight: .heavy))
+            .foregroundStyle(.white)
+            .lineLimit(1)
+            .frame(width: size, height: size)
+            .background(Color.line(line), in: Circle())
+            .accessibilityLabel(line)
     }
 }
 
-/** 흰 바탕 알약 + 노선 색 점(노랑·초록 바탕 흰 글씨는 안 읽혀서). */
+/** 한 역의 노선들(홈 카드·역 검색). 배지만, [max]개를 넘으면 "+N". */
+struct LineBadges: View {
+    let lines: [String]
+    var max = 4
+
+    var body: some View {
+        HStack(spacing: 4) {
+            ForEach(lines.prefix(max), id: \.self) { LineBadge(line: $0) }
+            if lines.count > max {
+                Text("+\(lines.count - max)").font(.system(size: 12, weight: .bold)).foregroundStyle(Color.muted)
+                    .padding(.horizontal, 7).padding(.vertical, 3)
+                    .background(Color(hex: 0xEEF1F6), in: Capsule())
+            }
+        }
+        .fixedSize()
+    }
+}
+
+/** 노선 하나를 이름까지(탑승 화면 위쪽처럼 자리가 넉넉한 곳): 배지 + 노선 이름. onDark: 파란 배경 위. */
 struct LineChip: View {
     let line: String
     var onDark = false
 
     var body: some View {
-        HStack(spacing: 6) {
-            Circle().fill(Color.line(line)).frame(width: 8, height: 8)
-            Text(line).font(.system(size: 13, weight: .bold))
+        HStack(spacing: 8) {
+            LineBadge(line: line, size: 22).accessibilityHidden(true)
+            Text(line).font(.system(size: 14, weight: .bold))
                 .foregroundStyle(onDark ? Color.white : Color.ink)
                 .lineLimit(1)
         }
         .fixedSize()
-        .padding(.horizontal, 10).padding(.vertical, 5)
+        .padding(.leading, 4).padding(.trailing, 12).padding(.vertical, 4)
         .background(onDark ? Color.white.opacity(0.16) : Color.white, in: Capsule())
         .overlay(Capsule().stroke(onDark ? Color.clear : Color.hairline, lineWidth: 1))
     }

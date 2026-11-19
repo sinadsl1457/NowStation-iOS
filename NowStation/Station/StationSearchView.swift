@@ -84,7 +84,7 @@ struct StationRow: View {
             highlighted.font(.system(size: 18)).foregroundStyle(Color.ink)
                 .lineLimit(1).layoutPriority(1)
             Spacer(minLength: 8)
-            LineChips(lines: station.lines)
+            LineBadges(lines: station.lines)
         }
         .padding(12)
         .background(chosen ? Color.brandTint : .clear, in: RoundedRectangle(cornerRadius: 14))

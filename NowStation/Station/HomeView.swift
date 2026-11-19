@@ -155,7 +155,7 @@ private struct StationField: View {
             }
             .layoutPriority(1)
             Spacer(minLength: 8)
-            if let lines = station?.lines { LineChips(lines: lines) }
+            if let lines = station?.lines { LineBadges(lines: lines) }
         }
         .frame(minHeight: 60)
         .contentShape(Rectangle())
@@ -240,10 +240,11 @@ private struct SupportedLines: View {
             HStack(spacing: 8) {
                 ForEach(lines, id: \.self) { line in
                     HStack(spacing: 8) {
-                        Circle().fill(Color.line(line)).frame(width: 10, height: 10)
-                        Text(line).font(.system(size: 15, weight: .bold))
+                        LineBadge(line: line, size: 22).accessibilityHidden(true)
+                        Text(line).font(.system(size: 15, weight: .bold)).lineLimit(1)
                     }
-                    .padding(.horizontal, 14).padding(.vertical, 8)
+                    .fixedSize()
+                    .padding(.leading, 6).padding(.trailing, 14).padding(.vertical, 6)
                     .background(.white, in: Capsule())
                     .overlay(Capsule().stroke(Color.hairline, lineWidth: 1))
                 }

@@ -2,7 +2,7 @@ import SwiftUI
 import XCTest
 @testable import NowStation
 
-/** 노선이 둘인 역(강남 = 2호선 + 신분당선)이 좁은 폰에서도 칩이 두 줄로 깨지지 않는지 눈으로 확인. */
+/** 노선이 둘인 역(강남 = 2호선 + 신분당선)이 좁은 폰에서도 배지가 깨지지 않는지 눈으로 확인. */
 @MainActor
 final class LineChipRenderTests: XCTestCase {
     final class NoStations: StationRepository {
