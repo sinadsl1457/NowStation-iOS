@@ -13,7 +13,8 @@ struct RideScreen: View {
 
     var body: some View {
         ZStack {
-            if ride.view.prepareToAlight {
+            // 파란 전체 화면은 최종 내릴 역에서만. 환승역은 알림·진동과 안내 띠로(사용자 결정)
+            if ride.view.prepareToAlight && !RideTexts.isTransfer(ride) {
                 AlightContent(ride: ride, onEnd: { confirming = true })
                     .transition(.move(edge: .bottom).combined(with: .opacity))
             } else {
@@ -21,7 +22,7 @@ struct RideScreen: View {
                     .transition(.opacity)
             }
         }
-        .animation(.easeOut(duration: 0.45), value: ride.view.prepareToAlight)
+        .animation(.easeOut(duration: 0.45), value: ride.view.prepareToAlight && !RideTexts.isTransfer(ride))
         .alert("탑승을 끝낼까요?", isPresented: $confirming) {
             Button("계속 타기", role: .cancel) {}
             Button("끝내기", role: .destructive, action: onEnd)
@@ -62,7 +63,7 @@ private struct RidingContent: View {
             .frame(maxWidth: .infinity, alignment: .leading)
             .background(.white, in: RoundedRectangle(cornerRadius: 24))
 
-            if !v.legs.isEmpty { LegChips(legs: v.legs, current: v.line) }
+            if v.legs.contains(where: { !$0.stations.isEmpty }) { RouteBar(legs: v.legs, here: v.thisStation, currentLine: v.line) }
             if let loadStrip, let onPick { StripCard(ride: ride, load: loadStrip, onPick: onPick) } else { RouteCard(ride: ride) }
 
             Label("화면을 꺼도 잠금화면에서 계속 보여요", systemImage: "lock")
@@ -110,25 +111,76 @@ private struct BannerView: View {
     }
 }
 
-/** 경로 구간: "태평 ▶ 선릉" "선릉 ▶ 강남". 지금 구간을 칠한다. */
-private struct LegChips: View {
+/**
+ * 전체 경로 막대: 출발부터 도착까지 실제로 지나는 역만 한 줄로, 구간마다 노선 색. 환승역에는 두 노선 배지.
+ * 환승해도 막대는 그대로라 화면이 갑자기 바뀌지 않는다(사용자 피드백: 선릉에서 갑자기 2호선 노선도로 바뀌어 헷갈림). Android RouteBar와 같은 배치.
+ */
+private struct RouteBar: View {
     let legs: [RideLeg]
-    let current: String?
+    let here: String?
+    let currentLine: String?
 
-    var body: some View {
-        HStack(spacing: 8) {
-            ForEach(legs, id: \.self) { leg in
-                let on = leg.line == current
-                HStack(spacing: 4) {
-                    LineBadge(line: leg.line, size: 18)
-                    Text("\(leg.from) ▶ \(leg.to)").font(.system(size: 14, weight: .bold))
+    private struct Stop: Hashable { var name: String; var inLine: String?; var outLine: String? }
+
+    private var stops: [Stop] {
+        var out: [Stop] = []
+        for (li, leg) in legs.enumerated() {
+            for (si, name) in leg.stations.enumerated() {
+                if li > 0 && si == 0, var last = out.popLast() {
+                    last.outLine = leg.line
+                    out.append(last)
+                } else {
+                    out.append(Stop(name: name, inLine: si == 0 ? nil : leg.line, outLine: si == leg.stations.count - 1 ? nil : leg.line))
                 }
-                .padding(.horizontal, 10).padding(.vertical, 6)
-                .foregroundStyle(on ? Color.white : Color.ink)
-                .background(Capsule().fill(on ? Color.line(leg.line) : Color.white))
-                .overlay(Capsule().stroke(Color.line(leg.line), lineWidth: on ? 0 : 1.5))
             }
         }
+        return out
+    }
+
+    var body: some View {
+        let stops = self.stops
+        // 지금 위치: 지금 노선 구간 안의 이번 역(환승역 이름은 두 구간에 있어 노선으로 가린다)
+        let hereIndex = stops.firstIndex { $0.name == here && ($0.inLine == currentLine || $0.outLine == currentLine) }
+        VStack(alignment: .leading, spacing: 8) {
+            Text("\(stops.first?.name ?? "") → \(stops.last?.name ?? "")").font(.system(size: 13, weight: .bold)).foregroundStyle(Color.muted)
+                .padding(.horizontal, 16)
+            ScrollViewReader { proxy in
+                ScrollView(.horizontal, showsIndicators: false) {
+                    HStack(alignment: .top, spacing: 0) {
+                        ForEach(Array(stops.enumerated()), id: \.offset) { i, stop in
+                            let transfer = stop.inLine != nil && stop.outLine != nil && stop.inLine != stop.outLine
+                            let isHere = i == hereIndex
+                            VStack(spacing: 4) {
+                                ZStack {
+                                    HStack(spacing: 0) {
+                                        Rectangle().fill(stop.inLine.map { Color.line($0) } ?? .clear).frame(height: 5)
+                                        Rectangle().fill(stop.outLine.map { Color.line($0) } ?? .clear).frame(height: 5)
+                                    }
+                                    let c = Color.line(stop.outLine ?? stop.inLine)
+                                    Circle().fill(isHere ? c : .white)
+                                        .frame(width: isHere ? 20 : transfer ? 16 : 11, height: isHere ? 20 : transfer ? 16 : 11)
+                                        .overlay(Circle().stroke(transfer ? Color.ink : c, lineWidth: 3))
+                                }
+                                .frame(height: 22)
+                                Text(stop.name).font(.system(size: 12, weight: isHere || transfer ? .heavy : .regular))
+                                    .foregroundStyle(isHere ? Color.line(currentLine) : Color.ink).lineLimit(1).minimumScaleFactor(0.7)
+                                if transfer, let a = stop.inLine, let b = stop.outLine {
+                                    HStack(spacing: 2) { LineBadge(line: a, size: 20); LineBadge(line: b, size: 20) }
+                                }
+                                if isHere { Text("지금").font(.system(size: 10, weight: .bold)).foregroundStyle(Color.line(currentLine)) }
+                            }
+                            .frame(width: 64)
+                            .id(i)
+                        }
+                    }
+                    .padding(.horizontal, 8)
+                }
+                .onAppear { if let h = hereIndex { proxy.scrollTo(max(h - 2, 0), anchor: .leading) } }
+                .onChange(of: hereIndex) { _, h in if let h { withAnimation { proxy.scrollTo(max(h - 2, 0), anchor: .leading) } } }
+            }
+        }
+        .padding(.vertical, 14)
+        .background(.white, in: RoundedRectangle(cornerRadius: 24))
     }
 }
 
@@ -155,6 +207,9 @@ private struct StripCard: View {
                     Spacer()
                     Text(strip.trains.map(\.seenSecondsAgo).min().map { "\($0)초 전 기준" } ?? "")
                         .font(.caption).foregroundStyle(Color.muted)
+                }
+                if strip.boardIndex > 0 {
+                    Text("회색 역: 열차가 \(strip.leg.from)(으)로 들어오는 쪽").font(.caption2).foregroundStyle(Color.muted)
                 }
                 ScrollViewReader { proxy in
                     ScrollView(.horizontal, showsIndicators: false) {
@@ -193,15 +248,16 @@ private struct StripCard: View {
             VStack(spacing: 6) {
                 ForEach(trains) { t in trainTag(t, line: strip.leg.line) }
             }
-            .frame(minHeight: 62, alignment: .bottom)
+            .frame(minHeight: 74, alignment: .bottom)
             ZStack {
-                Rectangle().fill(Color(hex: 0xC9D1E0)).frame(height: 3)
+                Rectangle().fill(index >= strip.boardIndex ? Color.line(strip.leg.line) : Color(hex: 0xC9D1E0)).frame(height: 3)
                 Circle().fill(index == strip.boardIndex ? Color.line(strip.leg.line) : Color(hex: 0xC9D1E0))
                     .frame(width: index == strip.boardIndex ? 16 : 10, height: index == strip.boardIndex ? 16 : 10)
             }
             .frame(height: 18)
             Text(name).font(.system(size: 13, weight: index == strip.boardIndex ? .heavy : .regular))
-                .foregroundStyle(index == strip.boardIndex ? Color.line(strip.leg.line) : Color.ink)
+                // 타는 역 앞쪽(들어오는 열차가 오는 쪽)은 내 경로가 아니라 흐리게
+                .foregroundStyle(index == strip.boardIndex ? Color.line(strip.leg.line) : index < strip.boardIndex ? Color(hex: 0xA8B0BF) : Color.ink)
                 .lineLimit(1).minimumScaleFactor(0.7)
         }
         .frame(width: Self.cell)
@@ -219,6 +275,7 @@ private struct StripCard: View {
         } label: {
             VStack(spacing: 2) {
                 Text(RideTexts.terminal(t)).font(.system(size: 11, weight: .semibold))
+                if let state = RideTexts.trainState(t) { Text(state).font(.system(size: 10)).opacity(0.8) }
                 if picking == t.trainNo { ProgressView().controlSize(.mini) } else {
                     Text(t.trainNo).font(.system(size: 12, weight: .bold).monospacedDigit())
                 }
@@ -300,14 +357,14 @@ private struct AlightContent: View {
             }
             Spacer()
             Ripple()
-            Text(RideTexts.isTransfer(ride) ? "갈아탈 준비하세요" : "내릴 준비하세요").font(.system(size: 30, weight: .black)).padding(.top, 18)
-            Text("이번 역").font(.system(size: 16)).opacity(0.85).padding(.top, 10)
-            Text(v.thisStation ?? "").font(.system(size: 76, weight: .black))
+            let arrived = v.status == .arrived
+            let target = v.target ?? v.thisStation
+            Text(arrived ? "도착했어요" : RideTexts.isTransfer(ride) ? "갈아탈 준비하세요" : "내릴 준비하세요").font(.system(size: 30, weight: .black)).padding(.top, 18)
+            // 한 정거장 전부터 켜진다: 아직 전 역이면 "다음 역"
+            Text(arrived || v.thisStation == target ? "이번 역" : "다음 역").font(.system(size: 16)).opacity(0.85).padding(.top, 10)
+            Text(target ?? "").font(.system(size: 76, weight: .black))
                 .scaleEffect(grown ? 1 : 0.85)
             Text(RideTexts.isTransfer(ride) ? "여기서 갈아타세요" : "내리실 역이에요").font(.system(size: 16)).opacity(0.9)
-            if let next = v.nextStation {
-                Text("다음 역 \(next)").font(.system(size: 15)).opacity(0.7).padding(.top, 20)
-            }
             if !ride.online {
                 // 연결이 끊기면 보이는 역이 오래된 것일 수 있다(갈아탈·내릴 준비 화면에서도)
                 Label("연결 끊김(다시 시도 중)", systemImage: "wifi.slash").font(.system(size: 14, weight: .semibold)).padding(.top, 10)

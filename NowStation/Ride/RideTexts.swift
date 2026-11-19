@@ -4,7 +4,9 @@ import Foundation
 enum RideTexts {
     static func title(_ ride: ActiveRide) -> String {
         let v = ride.view
-        if v.prepareToAlight, let s = v.thisStation { return isTransfer(ride) ? "곧 \(s), 갈아탈 준비하세요" : "곧 \(s), 내릴 준비하세요" }
+        if v.status == .arrived { return "\(v.thisStation ?? "") 도착" }
+        // 한 정거장 전부터 켜지므로 이번 역이 아니라 구간 끝(내릴·갈아탈 역) 이름으로
+        if v.prepareToAlight, let s = v.target ?? v.thisStation { return isTransfer(ride) ? "곧 \(s), 갈아탈 준비하세요" : "곧 \(s), 내릴 준비하세요" }
         if v.status == .waiting { return "\(v.thisStation ?? ride.origin)역에서 기다리는 중" }
         if v.status == .stale || v.thisStation == nil { return "위치 확인 중" }
         return "이번 역 \(v.thisStation!)"
@@ -15,6 +17,7 @@ enum RideTexts {
         switch ride.view.status {
         case .waiting: return "대기"
         case .atStation, .moving, .holdingBetween: return ride.view.thisStation
+        case .arrived: return "도착"
         case .stale, .unknown: return nil
         }
     }
@@ -28,6 +31,7 @@ enum RideTexts {
         case .moving: main = v.nextStation.map { "다음 역 \($0)" } ?? "종점 방면"
         case .holdingBetween: main = "역 사이에서 잠시 정차 중"
         case .stale: main = v.thisStation.map { "마지막으로 확인한 역 \($0)" } ?? "열차 소식을 기다리는 중"
+        case .arrived: main = "도착했어요"
         case .unknown: main = "상태를 확인하는 중"
         }
         return ride.online ? main : "\(main) · 연결 끊김(다시 시도 중)"
@@ -41,6 +45,7 @@ enum RideTexts {
         case .atStation: return "정차 중"
         case .moving: return "달리는 중"
         case .holdingBetween: return "역 사이 정차"
+        case .arrived: return "도착"
         case .stale, .unknown: return "위치 확인 중"
         }
     }
@@ -49,6 +54,16 @@ enum RideTexts {
     static func remaining(_ ride: ActiveRide) -> String? {
         guard let target = ride.view.target, let n = ride.view.remainingStops else { return nil }
         return n == 0 ? "이번 역이 \(target)이에요" : "\(target)까지 \(n)정거장"
+    }
+
+    /** 노선도 위 열차의 그 역에서의 상태: 공공 데이터 그대로라 위쪽 "이번 정거장"(다가오는 역)과 헷갈리지 않게 적는다. */
+    static func trainState(_ t: StripTrain) -> String? {
+        switch t.status {
+        case "ENTERING": return "진입"
+        case "ARRIVED": return "도착"
+        case "DEPARTED": return "출발"
+        default: return nil
+        }
     }
 
     /** 노선도 위 열차 이름표: "왕십리행". */

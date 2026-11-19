@@ -60,6 +60,8 @@ enum RideStatus: String {
     case holdingBetween = "HOLDING_BETWEEN"
     /** 탄 열차 소식이 2분 넘게 없음 */
     case stale = "STALE"
+    /** 내릴 역에 도착(더 따라가지 않음) */
+    case arrived = "ARRIVED"
     case unknown = "UNKNOWN"
 }
 
@@ -67,6 +69,22 @@ struct RideLeg: Equatable, Decodable, Hashable {
     var line: String
     var from: String
     var to: String
+    /** 지나는 역(양 끝 포함). 전체 경로 막대에 쓴다(노선도 응답의 구간에는 비어 있음). */
+    var stations: [String] = []
+
+    init(line: String, from: String, to: String, stations: [String] = []) {
+        self.line = line; self.from = from; self.to = to; self.stations = stations
+    }
+
+    init(from decoder: Decoder) throws {
+        let c = try decoder.container(keyedBy: CodingKeys.self)
+        line = try c.decode(String.self, forKey: .line)
+        from = try c.decode(String.self, forKey: .from)
+        to = try c.decode(String.self, forKey: .to)
+        stations = try c.decodeIfPresent([String].self, forKey: .stations) ?? []
+    }
+
+    private enum CodingKeys: String, CodingKey { case line, from, to, stations }
 }
 
 /** TRANSFER: 환승역에 도착(다음 구간 열차를 골라 둠). */
