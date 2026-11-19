@@ -78,3 +78,56 @@ final class MotionDetectorTests: XCTestCase {
         XCTAssertEqual(events.map(\.kind), [.moving])
     }
 }
+
+/** 실기기에서 발견: 탑승을 시작하고 폰을 책상에 내려놓았더니 가만히 있는데 "출발"로 판단해 엉뚱한 열차를 따라감. */
+final class TiltTests: XCTestCase {
+    func test_손에_들었다가_조금_기울여_책상에_내려놓으면_출발이_아니다() {
+        let t0 = Date(timeIntervalSince1970: 1_800_000_000)
+        let d = MotionDetector()
+        var events: [Motion] = []
+        let g = 9.8
+        for i in 0..<(120 * 20) {
+            let s = Double(i) * 0.05
+            let tilt: Double
+            var shake = 0.0
+            switch s {
+            case ..<10: tilt = 0                                   // 손에 들고 화면 보는 중
+            case 10..<11.5: tilt = (s - 10) / 1.5 * 8; shake = 1.5 * sin(2 * .pi * 6 * s) // 내려놓는 동작(1.5초, 덜컹)
+            default: tilt = 8                                      // 책상 위, 처음보다 8도 기울어 가만히
+            }
+            let r = tilt * .pi / 180
+            let sample = AccelSample(at: t0.addingTimeInterval(s), x: g * sin(r) + shake, y: g * cos(r), z: shake * 0.5)
+            if let e = d.accept(sample) { events.append(e) }
+        }
+        XCTAssertTrue(events.isEmpty, "가만히 있는데 \(events)")
+    }
+
+    func test_흔들림_없이_살살_돌려_내려놓아도_회전으로_알아채_출발이_아니다() {
+        let t0 = Date(timeIntervalSince1970: 1_800_000_000)
+        let d = MotionDetector()
+        var events: [Motion] = []
+        for i in 0..<(90 * 20) {
+            let s = Double(i) * 0.05
+            let deg = s < 10 ? 0 : s < 11 ? (s - 10) * 10 : 10.0     // 1초에 10° 돌려 내려놓음(0.17 rad/s 아님: 아래 회전값)
+            let rot = (10..<11).contains(s) ? 0.6 : 0.0              // 내려놓는 1초 동안 자이로 0.6 rad/s
+            let r = deg * .pi / 180
+            if let e = d.accept(AccelSample(at: t0.addingTimeInterval(s), x: 9.8 * sin(r), y: 9.8 * cos(r), z: 0, rotation: rot)) { events.append(e) }
+        }
+        XCTAssertTrue(events.isEmpty, "가만히 있는데 \(events)")
+    }
+
+    func test_천천히_기울어_굳어도_40초_뒤에는_풀리고_진짜_출발을_잡는다() {
+        let t0 = Date(timeIntervalSince1970: 1_800_000_000)
+        let d = MotionDetector()
+        var events: [Motion] = []
+        for i in 0..<(200 * 20) {
+            let s = Double(i) * 0.05
+            let deg = s < 10 ? 0 : s < 20 ? (s - 10) * 0.6 : 6.0      // 회전·흔들림 없이 10초에 걸쳐 6° 기울어짐
+            let r = deg * .pi / 180
+            let train = (150...160).contains(s) ? 0.9 : 0                // 150초에 진짜 출발
+            if let e = d.accept(AccelSample(at: t0.addingTimeInterval(s), x: 9.8 * sin(r), y: 9.8 * cos(r), z: train)) { events.append(e) }
+        }
+        XCTAssertEqual(events.last?.kind, .moving)
+        XCTAssertEqual(events.last!.at.timeIntervalSince(t0.addingTimeInterval(150)), 0, accuracy: 1.5, "진짜 출발을 놓치지 않는다")
+    }
+}

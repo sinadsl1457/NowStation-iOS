@@ -72,7 +72,7 @@ final class RideRunner: NSObject {
         probe.end()
         refreshTask?.cancel()
         refreshTask = nil
-        motion.stopAccelerometerUpdates()
+        motion.stopDeviceMotionUpdates()
         location.stopUpdatingLocation()
         backgroundSession?.invalidate()
         backgroundSession = nil
@@ -96,15 +96,19 @@ final class RideRunner: NSObject {
     // MARK: 움직임
 
     private func startMotion() {
-        guard motion.isAccelerometerAvailable else { return }
+        // 가속도 + 자이로(회전 빠르기: 사람이 폰을 들거나 내려놓는지 가린다)를 한 번에 받는다
+        guard motion.isDeviceMotionAvailable else { return }
         detector = MotionDetector()
         let detector = self.detector
-        motion.accelerometerUpdateInterval = 0.05
-        motion.startAccelerometerUpdates(to: motionQueue) { [weak self] data, _ in
+        motion.deviceMotionUpdateInterval = 0.05
+        motion.startDeviceMotionUpdates(to: motionQueue) { [weak self] data, _ in
             guard let data else { return }
             let g = Self.gravity
             let at = SensorClock.wallTime(of: data.timestamp, now: Date(), uptime: ProcessInfo.processInfo.systemUptime)
-            let sample = AccelSample(at: at, x: data.acceleration.x * g, y: data.acceleration.y * g, z: data.acceleration.z * g)
+            // 판단 규칙은 중력 포함 가속도를 받는다(Android와 같은 입력)
+            let a = (x: data.gravity.x + data.userAcceleration.x, y: data.gravity.y + data.userAcceleration.y, z: data.gravity.z + data.userAcceleration.z)
+            let r = data.rotationRate
+            let sample = AccelSample(at: at, x: a.x * g, y: a.y * g, z: a.z * g, rotation: (r.x * r.x + r.y * r.y + r.z * r.z).squareRoot())
             guard let event = detector.accept(sample) else { return }
             Task { @MainActor [weak self] in await self?.tracker.report(event) }
         }

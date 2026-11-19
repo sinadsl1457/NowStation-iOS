@@ -20,6 +20,13 @@ struct MotionRules {
     /** 감속을 출발과 반대 방향으로 볼 기준(방향 코사인). */
     var oppositeCosine = -0.3
     var warmupSeconds = 3.0
+    /**
+     * 폰이 이보다 빨리 돌면 사람이 들거나 내려놓는 중(rad/s, 약 14°/s). 열차가 곡선에서 폰을 돌리는 건 0.1 아래.
+     * 손을 뗀 뒤 지금 자세로 중력을 다시 잡는다: 20°보다 작게 기울어도 5°면 0.85 m/s²라 가속으로 착각했다(실기기).
+     */
+    var handlingRotation = 0.25
+    /** 열차 가속·감속은 길어야 20~30초. 같은 힘이 이보다 오래 이어지면 가속이 아니라 기울어진 것(천천히 기울인 경우). */
+    var maxPushSeconds = 40.0
 }
 
 /** 가속도 센서 값 하나(중력 포함, m/s²). */
@@ -28,6 +35,8 @@ struct AccelSample {
     var x: Double
     var y: Double
     var z: Double
+    /** 자이로가 잰 회전 빠르기(rad/s). 사람이 폰을 만지는지 가리는 데만 쓴다. */
+    var rotation: Double = 0
 }
 
 /**
@@ -47,6 +56,8 @@ final class MotionDetector {
 
     private var moving = false
     private var departureDirection: Vec?
+    /** 폰을 들거나 내려놓는 중이었다. 끝나면 그때 자세를 새 기준으로 잡는다. */
+    private var handling = false
 
     private var burstStart: Date?
     private var burstLastStrong: Date?
@@ -78,8 +89,23 @@ final class MotionDetector {
         // 꾸준한 밀림이 없을 때만 중력을 따라간다(열차 가속이 중력에 섞이지 않게)
         if push.length < rules.pushEndThreshold { gravity = blend(g, raw, dt, rules.gravitySeconds) }
 
+        if sample.rotation > rules.handlingRotation || shake > rules.maxShakeForJudging {
+            handling = true
+            endBurst()
+            return nil
+        }
+        if handling {
+            handling = false
+            reset(raw, at: sample.at)
+            return nil
+        }
+        if let start = burstStart, sample.at.timeIntervalSince(start) > rules.maxPushSeconds {
+            // 가속이 아니라 기울어진 채 그대로였다. 이 밀림으로 낸 "출발"도 틀렸으니 멈춘 것으로 되돌린다
+            if burstConfirmed { moving = false }
+            reset(raw, at: sample.at)
+            return nil
+        }
         if let judgeFrom, sample.at < judgeFrom { endBurst(); return nil }
-        if shake > rules.maxShakeForJudging { endBurst(); return nil }
         return track(sample.at, dt)
     }
 
