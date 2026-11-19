@@ -14,7 +14,6 @@ final class FakeRideRepository: RideRepository {
         return try next.get()
     }
     func end(rideId: String) async throws { ended.append(rideId) }
-    func sendNotes(rideId: String, lines: [String]) async throws {}
 }
 
 @MainActor

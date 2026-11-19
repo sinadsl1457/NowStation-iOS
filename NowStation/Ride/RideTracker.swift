@@ -47,12 +47,6 @@ final class RideTracker {
         await sync()
     }
 
-    /** 시험용 기록. 못 보내도 그만이다(탑승에는 영향 없음). */
-    func sendNotes(_ lines: [String]) async {
-        guard !lines.isEmpty, let ride = state else { return }
-        try? await repository.sendNotes(rideId: ride.view.rideId, lines: lines)
-    }
-
     /** 끝내기. 서버에 못 알려도 앱에서는 끝낸다. */
     func end() async {
         guard let ride = state else { return }
