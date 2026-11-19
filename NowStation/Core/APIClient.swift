@@ -44,6 +44,14 @@ final class APIClient {
         return try await send(request)
     }
 
+    func postNoContent<B: Encodable>(_ path: String, body: B) async throws {
+        var request = URLRequest(url: baseURL.appendingPathComponent(path))
+        request.httpMethod = "POST"
+        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+        request.httpBody = try Self.encoder.encode(body)
+        _ = try await data(for: request)
+    }
+
     func delete(_ path: String) async throws {
         var request = URLRequest(url: baseURL.appendingPathComponent(path))
         request.httpMethod = "DELETE"

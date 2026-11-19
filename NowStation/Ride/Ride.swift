@@ -74,6 +74,8 @@ protocol RideRepository {
     func get(rideId: String) async throws -> RideView
     func sendMotion(rideId: String, motions: [Motion], sentAt: Date) async throws -> RideView
     func end(rideId: String) async throws
+    /** 시험용 기록(운영체제 판단, 버린 출발)을 서버 로그로. */
+    func sendNotes(rideId: String, lines: [String]) async throws
 }
 
 /** 서버 탑승 API(README의 API 표와 같은 모양). */
@@ -97,5 +99,11 @@ struct RemoteRideRepository: RideRepository {
 
     func end(rideId: String) async throws {
         try await api.delete("api/rides/\(rideId)")
+    }
+
+    private struct NotesBody: Encodable { let lines: [String] }
+
+    func sendNotes(rideId: String, lines: [String]) async throws {
+        try await api.postNoContent("api/rides/\(rideId)/notes", body: NotesBody(lines: lines))
     }
 }
