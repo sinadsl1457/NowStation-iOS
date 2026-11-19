@@ -14,7 +14,7 @@ struct RideScreen: View {
     var body: some View {
         ZStack {
             // 파란 전체 화면은 최종 내릴 역에서만. 환승역은 알림·진동과 안내 띠로(사용자 결정)
-            if ride.view.prepareToAlight && !RideTexts.isTransfer(ride) {
+            if RideTexts.showsAlightScreen(ride) {
                 AlightContent(ride: ride, onEnd: { confirming = true })
                     .transition(.move(edge: .bottom).combined(with: .opacity))
             } else {
@@ -22,7 +22,7 @@ struct RideScreen: View {
                     .transition(.opacity)
             }
         }
-        .animation(.easeOut(duration: 0.45), value: ride.view.prepareToAlight && !RideTexts.isTransfer(ride))
+        .animation(.easeOut(duration: 0.45), value: RideTexts.showsAlightScreen(ride))
         .alert("탑승을 끝낼까요?", isPresented: $confirming) {
             Button("계속 타기", role: .cancel) {}
             Button("끝내기", role: .destructive, action: onEnd)
@@ -97,7 +97,7 @@ private struct BannerView: View {
 
     var body: some View {
         let v = ride.view
-        let warn = v.notice == .transfer
+        let warn = v.notice == .transfer || v.prepareToAlight
         HStack(spacing: 8) {
             Image(systemName: warn ? "arrow.triangle.2.circlepath" : "tram.fill")
             Text(RideTexts.banner(ride)).font(.system(size: 14, weight: .semibold)).fixedSize(horizontal: false, vertical: true)
