@@ -49,3 +49,30 @@ final class MemoryRecentStore: RecentRouteStore {
     func load() -> [RecentRoute] { routes }
     func save(_ routes: [RecentRoute]) { self.routes = routes }
 }
+
+@MainActor
+final class SwapTests: XCTestCase {
+    private func vm() -> HomeViewModel {
+        HomeViewModel(stations: LineChipRenderTests.NoStations(), tracker: RideTracker(repository: FakeRideRepository()), recentStore: MemoryRecentStore())
+    }
+
+    func test_바꾸기를_누르면_타는_역과_내릴_역이_서로_바뀐다() {
+        let v = vm()
+        XCTAssertFalse(v.canSwap)
+        v.origin = Station(name: "태평", lines: ["수인분당선"])
+        v.destination = Station(name: "강남", lines: ["2호선", "신분당선"])
+        v.swap()
+        XCTAssertEqual(v.origin?.name, "강남")
+        XCTAssertEqual(v.destination?.name, "태평")
+    }
+
+    func test_내릴_역만_골랐을_때_바꾸면_타는_역이_된다() {
+        let v = vm()
+        v.destination = Station(name: "강남", lines: [])
+        XCTAssertTrue(v.canSwap)
+        v.swap()
+        XCTAssertEqual(v.origin?.name, "강남")
+        XCTAssertNil(v.destination)
+        XCTAssertTrue(v.canStart)
+    }
+}

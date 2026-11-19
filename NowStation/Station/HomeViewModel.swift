@@ -21,6 +21,7 @@ final class HomeViewModel {
     var message: String?
 
     var canStart: Bool { origin != nil && !isStarting }
+    var canSwap: Bool { (origin != nil || destination != nil) && !isStarting }
 
     @ObservationIgnored private let stations: StationRepository
     @ObservationIgnored private let tracker: RideTracker
@@ -75,6 +76,9 @@ final class HomeViewModel {
     }
 
     func clearDestination() { destination = nil }
+
+    /** 타는 역과 내릴 역을 바꾼다(태평 → 강남으로 출근했으면 퇴근길은 강남 → 태평). */
+    func swap() { (origin, destination) = (destination, origin) }
 
     func startRecent(_ route: RecentRoute) async {
         guard !isStarting else { return }

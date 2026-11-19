@@ -93,13 +93,26 @@ struct HomeRouteCard: View {
 
     var body: some View {
         VStack(spacing: 0) {
-            StationField(label: "타는 역", station: vm.origin, filled: true) { vm.edit(.origin) }
-            HStack(spacing: 14) {
-                Rectangle().fill(Color(hex: 0xB8C3D9)).frame(width: 2, height: 14).padding(.horizontal, 5)
-                Rectangle().fill(Color(hex: 0xEEF1F6)).frame(height: 1)
+            HStack(spacing: 4) {
+                VStack(spacing: 0) {
+                    StationField(label: "타는 역", station: vm.origin, filled: true) { vm.edit(.origin) }
+                    HStack(spacing: 14) {
+                        Rectangle().fill(Color(hex: 0xB8C3D9)).frame(width: 2, height: 14).padding(.horizontal, 5)
+                        Rectangle().fill(Color(hex: 0xEEF1F6)).frame(height: 1)
+                    }
+                    StationField(label: "내릴 역 (선택)", station: vm.destination, filled: false,
+                                 onClear: vm.destination == nil ? nil : { vm.clearDestination() }) { vm.edit(.destination) }
+                }
+                // 타는 역 ↔ 내릴 역(퇴근길)
+                Button { withAnimation(.easeOut(duration: 0.2)) { vm.swap() } } label: {
+                    Image(systemName: "arrow.up.arrow.down").font(.system(size: 16, weight: .semibold))
+                        .foregroundStyle(vm.canSwap ? Color.brand : Color.muted.opacity(0.4))
+                        .frame(width: 40, height: 40)
+                        .overlay(Circle().stroke(Color.hairline, lineWidth: 1))
+                }
+                .disabled(!vm.canSwap)
+                .accessibilityLabel("타는 역과 내릴 역 바꾸기")
             }
-            StationField(label: "내릴 역 (선택)", station: vm.destination, filled: false,
-                         onClear: vm.destination == nil ? nil : { vm.clearDestination() }) { vm.edit(.destination) }
             Button {
                 Task { await vm.start() }
             } label: {
@@ -113,8 +126,8 @@ struct HomeRouteCard: View {
             .padding(.top, 12)
         }
         .padding(.horizontal, 18).padding(.top, 8).padding(.bottom, 18)
-        .background(.white, in: RoundedRectangle(cornerRadius: 22))
-        .shadow(color: Color.brand.opacity(0.12), radius: 16, y: 6)
+        // 그림자는 카드 바탕에만(안의 칩·버튼에 번지지 않게)
+        .background(RoundedRectangle(cornerRadius: 22).fill(.white).shadow(color: Color.brand.opacity(0.12), radius: 16, y: 6))
     }
 }
 
@@ -132,7 +145,7 @@ private struct StationField: View {
             }
             .frame(width: 12, height: 12)
             VStack(alignment: .leading, spacing: 2) {
-                Text(label).font(.caption.weight(.medium)).foregroundStyle(Color.muted)
+                Text(label).font(.caption.weight(.medium)).foregroundStyle(Color.muted).lineLimit(1).fixedSize()
                 Text(station?.name ?? "고르기")
                     .font(.system(size: 19, weight: station == nil ? .regular : .bold))
                     .foregroundStyle(station == nil ? Color.muted : Color.ink)
