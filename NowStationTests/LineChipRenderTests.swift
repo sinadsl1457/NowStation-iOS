@@ -16,7 +16,11 @@ final class LineChipRenderTests: XCTestCase {
         let vm = HomeViewModel(stations: NoStations(), tracker: RideTracker(repository: FakeRideRepository()), recentStore: MemoryRecentStore())
         // 실기기에서 깨진 조합: 내릴 역(× 버튼이 있어 자리가 더 좁음)에 노선 둘인 강남
         vm.origin = Station(name: "태평", lines: ["수인분당선"])
-        vm.destination = gangnam
+        vm.destination = gangnam  // 바꾸기 버튼이 있어 자리가 좁다
+        let same = HomeViewModel(stations: NoStations(), tracker: RideTracker(repository: FakeRideRepository()), recentStore: MemoryRecentStore())
+        same.origin = gangnam
+        same.destination = gangnam
+        attach(HomeRouteCard(vm: same).padding(.horizontal, 20).frame(width: 402).background(Color.ground), "같은역")
         for width in [402.0, 375.0, 320.0] {
             attach(HomeRouteCard(vm: vm).padding(.horizontal, 20).frame(width: width).background(Color.ground), "홈-\(Int(width))")
             attach(VStack(spacing: 0) {

@@ -20,7 +20,9 @@ final class HomeViewModel {
     private(set) var isStarting = false
     var message: String?
 
-    var canStart: Bool { origin != nil && !isStarting }
+    /** 같은 역을 두 칸에 고름(바꾸기·다시 고르다 생김). 시작하지 않고 카드에 알린다. */
+    var sameStation: Bool { origin != nil && origin?.name == destination?.name }
+    var canStart: Bool { origin != nil && !isStarting && !sameStation }
     var canSwap: Bool { (origin != nil || destination != nil) && !isStarting }
 
     @ObservationIgnored private let stations: StationRepository
@@ -75,8 +77,6 @@ final class HomeViewModel {
         Task { await search("") }
     }
 
-    func clearDestination() { destination = nil }
-
     /** 타는 역과 내릴 역을 바꾼다(태평 → 강남으로 출근했으면 퇴근길은 강남 → 태평). */
     func swap() { (origin, destination) = (destination, origin) }
 
@@ -88,7 +88,7 @@ final class HomeViewModel {
     }
 
     func start() async {
-        guard let origin, !isStarting else { return }
+        guard let origin, canStart else { return }
         isStarting = true
         defer { isStarting = false }
         do {

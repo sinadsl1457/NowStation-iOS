@@ -100,8 +100,7 @@ struct HomeRouteCard: View {
                         Rectangle().fill(Color(hex: 0xB8C3D9)).frame(width: 2, height: 14).padding(.horizontal, 5)
                         Rectangle().fill(Color(hex: 0xEEF1F6)).frame(height: 1)
                     }
-                    StationField(label: "내릴 역 (선택)", station: vm.destination, filled: false,
-                                 onClear: vm.destination == nil ? nil : { vm.clearDestination() }) { vm.edit(.destination) }
+                    StationField(label: "내릴 역 (선택)", station: vm.destination, filled: false) { vm.edit(.destination) }
                 }
                 // 타는 역 ↔ 내릴 역(퇴근길)
                 Button { withAnimation(.easeOut(duration: 0.2)) { vm.swap() } } label: {
@@ -112,6 +111,10 @@ struct HomeRouteCard: View {
                 }
                 .disabled(!vm.canSwap)
                 .accessibilityLabel("타는 역과 내릴 역 바꾸기")
+            }
+            if vm.sameStation {
+                Text("타는 역과 내릴 역이 같아요").font(.footnote).foregroundStyle(.red)
+                    .frame(maxWidth: .infinity, alignment: .leading).padding(.leading, 26).padding(.top, 4)
             }
             Button {
                 Task { await vm.start() }
@@ -135,7 +138,6 @@ private struct StationField: View {
     let label: String
     let station: Station?
     let filled: Bool
-    var onClear: (() -> Void)?
     let onTap: () -> Void
 
     var body: some View {
@@ -154,10 +156,6 @@ private struct StationField: View {
             .layoutPriority(1)
             Spacer(minLength: 8)
             if let lines = station?.lines { LineChips(lines: lines) }
-            if let onClear {
-                Button(action: onClear) { Image(systemName: "xmark").foregroundStyle(Color.muted) }
-                    .accessibilityLabel("내릴 역 지우기")
-            }
         }
         .frame(minHeight: 60)
         .contentShape(Rectangle())

@@ -76,3 +76,18 @@ final class SwapTests: XCTestCase {
         XCTAssertTrue(v.canStart)
     }
 }
+
+@MainActor
+final class SameStationTests: XCTestCase {
+    func test_타는_역과_내릴_역이_같으면_시작할_수_없다() async {
+        let rides = FakeRideRepository()
+        let tracker = RideTracker(repository: rides)
+        let v = HomeViewModel(stations: LineChipRenderTests.NoStations(), tracker: tracker, recentStore: MemoryRecentStore())
+        v.origin = Station(name: "강남", lines: ["2호선", "신분당선"])
+        v.destination = Station(name: "강남", lines: ["2호선", "신분당선"])
+        XCTAssertTrue(v.sameStation)
+        XCTAssertFalse(v.canStart)
+        await v.start()
+        XCTAssertNil(tracker.state)
+    }
+}
