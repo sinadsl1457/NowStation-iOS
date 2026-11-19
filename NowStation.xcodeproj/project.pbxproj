@@ -18,6 +18,7 @@
 		351F225899C575DD3AC65EBA /* RideRunner.swift in Sources */ = {isa = PBXBuildFile; fileRef = 36B5D2EEA109642CC5ED98E7 /* RideRunner.swift */; };
 		3732F0A0149221BACDC0AA95 /* HomeViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = E22EA8A0120E6DA3A20DEBDE /* HomeViewModel.swift */; };
 		4A5398AE5FD5FC8DC31CDD2B /* RideLiveActivity.swift in Sources */ = {isa = PBXBuildFile; fileRef = C63929FD0A5C12C70AF5B316 /* RideLiveActivity.swift */; };
+		4FCCEF09265F635598F51690 /* SensorClockTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3245574BCC0F2C91B5E5EEC /* SensorClockTests.swift */; };
 		51ACCA91E345BA53CF8C58CC /* MotionDetectorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7B8C7B8C887FBD473FA6363E /* MotionDetectorTests.swift */; };
 		59824F54E6E27594305160A7 /* Ride.swift in Sources */ = {isa = PBXBuildFile; fileRef = ED74B6D0EBE16A23344FB4C2 /* Ride.swift */; };
 		59A56111CC75F82ECE15F786 /* APIClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 18B2EE971D653D8DA0E35FC1 /* APIClient.swift */; };
@@ -32,6 +33,7 @@
 		BF0DF56B08551030B15D21E3 /* Station.swift in Sources */ = {isa = PBXBuildFile; fileRef = 221D4152DB91D340DFC7A130 /* Station.swift */; };
 		BF0E4BDFD90274B4D5292C12 /* RideActivityAttributes.swift in Sources */ = {isa = PBXBuildFile; fileRef = 001ABF49647143E62532774F /* RideActivityAttributes.swift */; };
 		C652BC496CDBE34973DA864C /* LineChipRenderTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 020B872E18A33A5093B6E981 /* LineChipRenderTests.swift */; };
+		C9897F70007AA6802301C654 /* SensorClock.swift in Sources */ = {isa = PBXBuildFile; fileRef = A26C6E3F32AA069FCA578C0D /* SensorClock.swift */; };
 		E9862B45F7C8E049568BA4F6 /* Theme.swift in Sources */ = {isa = PBXBuildFile; fileRef = 663147FC2C46F6AE0755F1E1 /* Theme.swift */; };
 /* End PBXBuildFile section */
 
@@ -91,6 +93,7 @@
 		8997374C66FBEA6EA8196C78 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		8EAC0BB0AE55758969FC0A82 /* StationSearchView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StationSearchView.swift; sourceTree = "<group>"; };
 		8FDB0EE34E99A4D3A69036EA /* HomeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeView.swift; sourceTree = "<group>"; };
+		A26C6E3F32AA069FCA578C0D /* SensorClock.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SensorClock.swift; sourceTree = "<group>"; };
 		A2A6490E1B6844831DCDA3C1 /* RideFlowUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RideFlowUITests.swift; sourceTree = "<group>"; };
 		A9078D18D44D1656584BADBC /* RideScreenRenderTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RideScreenRenderTests.swift; sourceTree = "<group>"; };
 		AD9CF8586E24C2A42AF0E2D7 /* RideTrackerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RideTrackerTests.swift; sourceTree = "<group>"; };
@@ -102,6 +105,7 @@
 		E18E6FEB81DAC9390F16DCDB /* MotionDetector.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MotionDetector.swift; sourceTree = "<group>"; };
 		E1AF08DF07AFFDD98C2517C5 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		E22EA8A0120E6DA3A20DEBDE /* HomeViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeViewModel.swift; sourceTree = "<group>"; };
+		E3245574BCC0F2C91B5E5EEC /* SensorClockTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SensorClockTests.swift; sourceTree = "<group>"; };
 		ED74B6D0EBE16A23344FB4C2 /* Ride.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Ride.swift; sourceTree = "<group>"; };
 		F7B440CAB7049A0ABF78A1A3 /* NowStationTests.xctest */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.cfbundle; path = NowStationTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
@@ -155,6 +159,7 @@
 				A9078D18D44D1656584BADBC /* RideScreenRenderTests.swift */,
 				AD9CF8586E24C2A42AF0E2D7 /* RideTrackerTests.swift */,
 				D973AA69CFE7F4279E14E36B /* SearchCancelTests.swift */,
+				E3245574BCC0F2C91B5E5EEC /* SensorClockTests.swift */,
 			);
 			path = NowStationTests;
 			sourceTree = "<group>";
@@ -204,6 +209,7 @@
 			isa = PBXGroup;
 			children = (
 				E18E6FEB81DAC9390F16DCDB /* MotionDetector.swift */,
+				A26C6E3F32AA069FCA578C0D /* SensorClock.swift */,
 			);
 			path = Motion;
 			sourceTree = "<group>";
@@ -409,6 +415,7 @@
 				64A3330F07C678FD5AE62CF2 /* RideScreen.swift in Sources */,
 				B63ECBBFE01C8AEC6C59E0BC /* RideTexts.swift in Sources */,
 				0E340B4DC7021DA62D97773F /* RideTracker.swift in Sources */,
+				C9897F70007AA6802301C654 /* SensorClock.swift in Sources */,
 				BF0DF56B08551030B15D21E3 /* Station.swift in Sources */,
 				296B093FA6AA8BA80D74F663 /* StationSearchView.swift in Sources */,
 				E9862B45F7C8E049568BA4F6 /* Theme.swift in Sources */,
@@ -424,6 +431,7 @@
 				040920612EB89A1ADF09706E /* RideScreenRenderTests.swift in Sources */,
 				01E51A1EBA11FA22D8F60214 /* RideTrackerTests.swift in Sources */,
 				7E16A4CB32AC837CEDDD4771 /* SearchCancelTests.swift in Sources */,
+				4FCCEF09265F635598F51690 /* SensorClockTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

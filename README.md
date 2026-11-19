@@ -47,18 +47,19 @@ Swift·SwiftUI·Observation(iOS 17+), 외부 라이브러리 없음. 프로젝�
 
 ## 테스트
 
-**25개**(`xcodebuild test -scheme NowStation -destination 'platform=iOS Simulator,name=iPhone 18 Pro'`)
+**26개**(`xcodebuild test -scheme NowStation -destination 'platform=iOS Simulator,name=iPhone 18 Pro'`)
 - 움직임 판단 7개: Android와 같은 합성 신호(정차·출발·감속, 두 정거장 연속, 걷는 흔들림, 짧은 밀림, 폰 돌리기, 달리는 중 재가속)
 - 탑승 상태 5개: 지하 끊김 → 쌓았다 보내기, 서버가 탑승을 모름, 내릴 역 알림은 한 번만, 최근 경로, 문구
 - 경로 고르기 5개: 타는 역 ↔ 내릴 역 바꾸기(퇴근길), 내릴 역만 골랐을 때, 같은 역이면 시작 안 함, 내릴 역 없으면 시작 안 함, 내릴 역 없이 저장된 옛 최근 경로
 - 검색 취소 2개: 한글 입력 중 앞 검색을 취소한 것을 "서버에 연결할 수 없어요"로 띄우던 버그(실기기에서 발견, 실패하는 테스트로 고정 후 수정)
 - 노선 배지 기호 1개("2호선" → 2, "수인분당선" → 수), 탑승 시각 24시간제 1개
+- 센서 시각 1개: 폰이 잠들었다 깨도 움직임을 실제 시각으로(실기기에서 발견: 집에서 시작해 걸어가면 탄 열차를 못 찾음)
 - 화면 그리기 2개(탑승·내릴 준비, 노선 둘인 역을 좁은 폭 402·375·320pt에서)
 - UI 2개(실제 서버): 타는 역만 고르면 시작이 잠김 → 내릴 역 고르기 → 탑승 시작 → 끝내기 확인(계속 타기 / 끝내기) → 최근 경로, README 화면 찍기(역 이름을 입력해 태평 → 야탑)
 
 ## CI/CD
 
-- **CI**(`.github/workflows/ios.yml`): main에 push하면 GitHub의 맥 서버가 XcodeGen으로 프로젝트를 만들고 빌드 + 단위 테스트 23개. 문서만 바꾼 push는 건너뜀. UI 테스트는 실제 서버에 붙어야 해서 로컬에서만
+- **CI**(`.github/workflows/ios.yml`): main에 push하면 GitHub의 맥 서버가 XcodeGen으로 프로젝트를 만들고 빌드 + 단위 테스트 24개. 문서만 바꾼 push는 건너뜀. UI 테스트는 실제 서버에 붙어야 해서 로컬에서만
 - **CD는 없음**: TestFlight·App Store는 유료 개발자 계정이 필요하고, 무료 서명은 맥에 폰을 연결해야 만들어져서 서버에서 할 수 없다. 설치는 맥에서 `xcodebuild -configuration Release ... -allowProvisioningUpdates` → `xcrun devicectl device install app`
 
 ## 실행

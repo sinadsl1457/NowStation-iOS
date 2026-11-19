@@ -96,13 +96,11 @@ final class RideRunner: NSObject {
         detector = MotionDetector()
         let detector = self.detector
         motion.accelerometerUpdateInterval = 0.05
-        // 센서 시각(부팅 뒤 초)을 벽시계로 바꾸는 기준
-        let offset = Date().timeIntervalSince1970 - ProcessInfo.processInfo.systemUptime
         motion.startAccelerometerUpdates(to: motionQueue) { [weak self] data, _ in
             guard let data else { return }
             let g = Self.gravity
-            let sample = AccelSample(at: Date(timeIntervalSince1970: offset + data.timestamp),
-                                     x: data.acceleration.x * g, y: data.acceleration.y * g, z: data.acceleration.z * g)
+            let at = SensorClock.wallTime(of: data.timestamp, now: Date(), uptime: ProcessInfo.processInfo.systemUptime)
+            let sample = AccelSample(at: at, x: data.acceleration.x * g, y: data.acceleration.y * g, z: data.acceleration.z * g)
             guard let event = detector.accept(sample) else { return }
             Task { @MainActor [weak self] in await self?.tracker.report(event) }
         }
