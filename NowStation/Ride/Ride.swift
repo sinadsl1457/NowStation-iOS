@@ -8,16 +8,34 @@ struct RideView: Equatable, Decodable {
     var thisStation: String?
     var nextStation: String?
     var prepareToAlight: Bool
+    /** 경로 구간들(태평 ▶ 선릉, 선릉 ▶ 강남). */
+    var legs: [RideLeg] = []
+    /** 따라가는(골라 둔) 열차 번호. */
+    var trainNo: String?
+    /** false면 골라 두기만 한 열차(타는 역을 떠날 때 폰과 맞춰 확정). */
+    var confirmed = false
+    /** 이번 구간 끝(환승역·내릴 역)과 남은 정거장. */
+    var target: String?
+    var remainingStops: Int?
+    /** 놓침·바꿈을 잠깐 알린다. */
+    var notice: RideNoticeKind?
 
-    enum CodingKeys: String, CodingKey { case rideId, status, line, thisStation, nextStation, prepareToAlight }
+    enum CodingKeys: String, CodingKey { case rideId, status, line, thisStation, nextStation, prepareToAlight, legs, trainNo, confirmed, target, remainingStops, notice }
 
-    init(rideId: String, status: RideStatus, line: String? = nil, thisStation: String? = nil, nextStation: String? = nil, prepareToAlight: Bool = false) {
+    init(rideId: String, status: RideStatus, line: String? = nil, thisStation: String? = nil, nextStation: String? = nil, prepareToAlight: Bool = false,
+         legs: [RideLeg] = [], trainNo: String? = nil, confirmed: Bool = false, target: String? = nil, remainingStops: Int? = nil, notice: RideNoticeKind? = nil) {
         self.rideId = rideId
         self.status = status
         self.line = line
         self.thisStation = thisStation
         self.nextStation = nextStation
         self.prepareToAlight = prepareToAlight
+        self.legs = legs
+        self.trainNo = trainNo
+        self.confirmed = confirmed
+        self.target = target
+        self.remainingStops = remainingStops
+        self.notice = notice
     }
 
     init(from decoder: Decoder) throws {
@@ -28,6 +46,12 @@ struct RideView: Equatable, Decodable {
         thisStation = try c.decodeIfPresent(String.self, forKey: .thisStation)
         nextStation = try c.decodeIfPresent(String.self, forKey: .nextStation)
         prepareToAlight = try c.decodeIfPresent(Bool.self, forKey: .prepareToAlight) ?? false
+        legs = try c.decodeIfPresent([RideLeg].self, forKey: .legs) ?? []
+        trainNo = try c.decodeIfPresent(String.self, forKey: .trainNo)
+        confirmed = try c.decodeIfPresent(Bool.self, forKey: .confirmed) ?? false
+        target = try c.decodeIfPresent(String.self, forKey: .target)
+        remainingStops = try c.decodeIfPresent(Int.self, forKey: .remainingStops)
+        notice = try c.decodeIfPresent(String.self, forKey: .notice).flatMap(RideNoticeKind.init(rawValue:))
     }
 }
 
@@ -43,16 +67,32 @@ enum RideStatus: String {
     case unknown = "UNKNOWN"
 }
 
-/** 지금 탄 열차로 고를 수 있는 열차 하나(서버가 출발역에 가까운 순으로 준다). */
-struct TrainChoice: Equatable, Decodable, Identifiable {
+struct RideLeg: Equatable, Decodable, Hashable {
     var line: String
+    var from: String
+    var to: String
+}
+
+/** MISSED: 골라 둔 열차를 놓쳐 다음 열차로 바꿈, SWITCHED: 폰과 같이 출발한 다른 열차로 바꿈. */
+enum RideNoticeKind: String { case missed = "MISSED", switched = "SWITCHED" }
+
+/** 가로 노선도: 지금 구간 방향의 역(타는 역 몇 정거장 전부터 구간 끝까지)과 그 위 열차. 이번정거장과 같은 배치. */
+struct TrainStrip: Equatable, Decodable {
+    var leg: RideLeg
+    var stations: [String]
+    var boardIndex: Int
+    var trains: [StripTrain]
+}
+
+struct StripTrain: Equatable, Decodable, Identifiable {
     var trainNo: String
     var station: String
     /** ENTERING(진입)·ARRIVED(도착)·DEPARTED(출발) 등 */
     var status: String
     var terminal: String?
+    var selected: Bool
     var seenSecondsAgo: Int
-    var id: String { "\(line)-\(trainNo)" }
+    var id: String { trainNo }
 }
 
 enum MotionKind: String, Encodable { case moving = "MOVING", stopped = "STOPPED" }
@@ -72,8 +112,6 @@ struct ActiveRide: Equatable {
     var updatedAt: Date
     var unsentMotions: Int = 0
     var startedAt: Date
-    /** 탄 열차를 고르는 중(시작 직후). 고르거나 "모르겠어요"면 false. */
-    var choosing: Bool = false
 
     /** 내릴 역 알림이 막 켜졌나. 환승 뒤 다시 켜지면 또 울린다. */
     static func alightAlertStarted(before: ActiveRide?, after: ActiveRide?) -> Bool {
@@ -87,7 +125,8 @@ protocol RideRepository {
     func start(origin: String, destination: String?) async throws -> RideView
     func get(rideId: String) async throws -> RideView
     func sendMotion(rideId: String, motions: [Motion], sentAt: Date) async throws -> RideView
-    func trains(rideId: String) async throws -> [TrainChoice]
+    /** 경로가 없으면(내릴 역 없음) nil. */
+    func strip(rideId: String) async throws -> TrainStrip?
     func choose(rideId: String, line: String, trainNo: String) async throws -> RideView
     func end(rideId: String) async throws
 }
@@ -112,8 +151,8 @@ struct RemoteRideRepository: RideRepository {
         try await api.post("api/rides/\(rideId)/motion", body: MotionBody(events: motions, sentAt: sentAt))
     }
 
-    func trains(rideId: String) async throws -> [TrainChoice] {
-        try await api.get("api/rides/\(rideId)/trains")
+    func strip(rideId: String) async throws -> TrainStrip? {
+        try await api.getOptional("api/rides/\(rideId)/trains")
     }
 
     func choose(rideId: String, line: String, trainNo: String) async throws -> RideView {

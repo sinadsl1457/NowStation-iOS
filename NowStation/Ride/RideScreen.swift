@@ -4,6 +4,9 @@ import SwiftUI
 struct RideScreen: View {
     let ride: ActiveRide
     var probe: SensorDriftProbe?
+    /** 가로 노선도 받기·다른 열차 고르기(없으면 노선도를 그리지 않음: 화면 미리보기·테스트). */
+    var loadStrip: (() async throws -> TrainStrip?)? = nil
+    var onPick: ((StripTrain, String) async throws -> Void)? = nil
     let onEnd: () -> Void
     // 끝내기는 되돌릴 수 없어서(현재역 표시·내릴 역 알림이 멈춤) 한 번 더 묻는다
     @State private var confirming = false
@@ -14,7 +17,7 @@ struct RideScreen: View {
                 AlightContent(ride: ride, onEnd: { confirming = true })
                     .transition(.move(edge: .bottom).combined(with: .opacity))
             } else {
-                RidingContent(ride: ride, probe: probe, onEnd: { confirming = true })
+                RidingContent(ride: ride, probe: probe, loadStrip: loadStrip, onPick: onPick, onEnd: { confirming = true })
                     .transition(.opacity)
             }
         }
@@ -31,10 +34,13 @@ struct RideScreen: View {
 private struct RidingContent: View {
     let ride: ActiveRide
     var probe: SensorDriftProbe?
+    var loadStrip: (() async throws -> TrainStrip?)?
+    var onPick: ((StripTrain, String) async throws -> Void)?
     let onEnd: () -> Void
 
     var body: some View {
         let v = ride.view
+        ScrollView {
         VStack(alignment: .leading, spacing: 16) {
             HStack {
                 if let line = v.line { LineChip(line: line) }
@@ -42,20 +48,23 @@ private struct RidingContent: View {
                 StatusPill(ride: ride)
             }
 
+            BannerView(ride: ride)
+
             VStack(alignment: .leading, spacing: 4) {
-                Text(v.status == .waiting ? "기다리는 역" : v.thisStation == nil ? "위치 확인 중" : "이번 역")
+                Text(v.status == .waiting ? "기다리는 역" : v.thisStation == nil ? "위치 확인 중" : "이번 정거장은")
                     .font(.system(size: 14, weight: .medium)).foregroundStyle(Color.muted)
                 Text(v.thisStation ?? ride.origin)
                     .font(.system(size: 60, weight: .black)).minimumScaleFactor(0.5).lineLimit(1)
-                Text(RideTexts.detail(ride)).font(.system(size: 16)).foregroundStyle(Color(hex: 0x2A3348))
+                Text(RideTexts.remaining(ride) ?? RideTexts.detail(ride))
+                    .font(.system(size: 17, weight: .semibold)).foregroundStyle(Color(hex: 0x2A3348))
             }
             .padding(22)
             .frame(maxWidth: .infinity, alignment: .leading)
             .background(.white, in: RoundedRectangle(cornerRadius: 24))
 
-            RouteCard(ride: ride)
+            if !v.legs.isEmpty { LegChips(legs: v.legs, current: v.line) }
+            if let loadStrip, let onPick { StripCard(ride: ride, load: loadStrip, onPick: onPick) } else { RouteCard(ride: ride) }
 
-            Spacer()
             Label("화면을 꺼도 잠금화면에서 계속 보여요", systemImage: "lock")
                 .font(.footnote).foregroundStyle(Color.muted).padding(.horizontal, 6)
             if let probe {
@@ -76,7 +85,153 @@ private struct RidingContent: View {
         }
         .foregroundStyle(Color.ink)
         .padding(.horizontal, 20).padding(.vertical, 16)
+        }
         .background(Color.ground)
+    }
+}
+
+/** 골라 둔 열차를 폰이 확인했는지·놓쳤는지(이번정거장은 고른 열차를 그대로 따라가기만 한다). */
+private struct BannerView: View {
+    let ride: ActiveRide
+
+    var body: some View {
+        let v = ride.view
+        let ok = v.confirmed && v.notice == nil
+        let warn = v.notice != nil
+        HStack(spacing: 8) {
+            Image(systemName: ok ? "checkmark.circle.fill" : warn ? "arrow.triangle.2.circlepath" : "hand.tap")
+            Text(RideTexts.banner(ride)).font(.system(size: 14, weight: .semibold)).fixedSize(horizontal: false, vertical: true)
+        }
+        .foregroundStyle(ok ? Color(hex: 0x14804A) : warn ? Color(hex: 0xB45309) : Color.brand)
+        .padding(.horizontal, 14).padding(.vertical, 10)
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .background(RoundedRectangle(cornerRadius: 14).fill(ok ? Color(hex: 0xE7F6EE) : warn ? Color(hex: 0xFFF4E5) : Color.brandTint))
+        .accessibilityElement(children: .combine)
+        .accessibilityIdentifier("ride-banner")
+    }
+}
+
+/** 경로 구간: "태평 ▶ 선릉" "선릉 ▶ 강남". 지금 구간을 칠한다. */
+private struct LegChips: View {
+    let legs: [RideLeg]
+    let current: String?
+
+    var body: some View {
+        HStack(spacing: 8) {
+            ForEach(legs, id: \.self) { leg in
+                let on = leg.line == current
+                HStack(spacing: 4) {
+                    LineBadge(line: leg.line, size: 18)
+                    Text("\(leg.from) ▶ \(leg.to)").font(.system(size: 14, weight: .bold))
+                }
+                .padding(.horizontal, 10).padding(.vertical, 6)
+                .foregroundStyle(on ? Color.white : Color.ink)
+                .background(Capsule().fill(on ? Color.line(leg.line) : Color.white))
+                .overlay(Capsule().stroke(Color.line(leg.line), lineWidth: on ? 0 : 1.5))
+            }
+        }
+    }
+}
+
+/**
+ * 가로 노선도(이번정거장 4708과 같은 배치): 역이 한 줄로 늘어서고 그 위에 열차. 골라 둔 열차는 칠하고, 다른 열차를 누르면 그 열차로.
+ * 공공 데이터가 늦어 15초마다 다시 받는다.
+ */
+private struct StripCard: View {
+    let ride: ActiveRide
+    let load: () async throws -> TrainStrip?
+    let onPick: (StripTrain, String) async throws -> Void
+
+    @State private var strip: TrainStrip?
+    @State private var picking: String?
+    @State private var failed = false
+
+    private static let cell: CGFloat = 76
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 10) {
+            if let strip {
+                HStack {
+                    Text("\(strip.leg.from) → \(strip.leg.to) 방향 열차").font(.system(size: 14, weight: .bold))
+                    Spacer()
+                    Text(strip.trains.map(\.seenSecondsAgo).min().map { "\($0)초 전 기준" } ?? "")
+                        .font(.caption).foregroundStyle(Color.muted)
+                }
+                ScrollViewReader { proxy in
+                    ScrollView(.horizontal, showsIndicators: false) {
+                        HStack(alignment: .bottom, spacing: 0) {
+                            ForEach(Array(strip.stations.enumerated()), id: \.offset) { i, name in
+                                column(strip, index: i, name: name).id(i)
+                            }
+                        }
+                        .padding(.horizontal, 8)
+                    }
+                    .onAppear { proxy.scrollTo(focus(strip), anchor: .center) }
+                }
+            } else {
+                Text(failed ? "열차 정보를 받지 못했어요. 잠시 후 다시 받아 와요." : "노선도를 받아 오는 중…")
+                    .font(.system(size: 14)).foregroundStyle(Color.muted).frame(maxWidth: .infinity, minHeight: 80)
+            }
+        }
+        .padding(16)
+        .background(.white, in: RoundedRectangle(cornerRadius: 24))
+        .task {
+            while !Task.isCancelled {
+                do { strip = try await load(); failed = false } catch is CancellationError { return } catch { failed = true }
+                try? await Task.sleep(nanoseconds: 15_000_000_000)
+            }
+        }
+    }
+
+    /** 골라 둔 열차, 없으면 타는 역을 가운데로. */
+    private func focus(_ strip: TrainStrip) -> Int {
+        strip.trains.first(where: \.selected).flatMap { t in strip.stations.firstIndex(of: t.station) } ?? strip.boardIndex
+    }
+
+    @ViewBuilder private func column(_ strip: TrainStrip, index: Int, name: String) -> some View {
+        let trains = strip.trains.filter { $0.station == name }
+        VStack(spacing: 6) {
+            VStack(spacing: 6) {
+                ForEach(trains) { t in trainTag(t, line: strip.leg.line) }
+            }
+            .frame(minHeight: 62, alignment: .bottom)
+            ZStack {
+                Rectangle().fill(Color(hex: 0xC9D1E0)).frame(height: 3)
+                Circle().fill(index == strip.boardIndex ? Color.line(strip.leg.line) : Color(hex: 0xC9D1E0))
+                    .frame(width: index == strip.boardIndex ? 16 : 10, height: index == strip.boardIndex ? 16 : 10)
+            }
+            .frame(height: 18)
+            Text(name).font(.system(size: 13, weight: index == strip.boardIndex ? .heavy : .regular))
+                .foregroundStyle(index == strip.boardIndex ? Color.line(strip.leg.line) : Color.ink)
+                .lineLimit(1).minimumScaleFactor(0.7)
+        }
+        .frame(width: Self.cell)
+    }
+
+    private func trainTag(_ t: StripTrain, line: String) -> some View {
+        Button {
+            guard picking == nil, !t.selected else { return }
+            picking = t.trainNo
+            Task {
+                try? await onPick(t, line)
+                strip = try? await load()
+                picking = nil
+            }
+        } label: {
+            VStack(spacing: 2) {
+                Text(RideTexts.terminal(t)).font(.system(size: 11, weight: .semibold))
+                if picking == t.trainNo { ProgressView().controlSize(.mini) } else {
+                    Text(t.trainNo).font(.system(size: 12, weight: .bold).monospacedDigit())
+                }
+                Image(systemName: "tram.fill").font(.system(size: 13))
+            }
+            .foregroundStyle(t.selected ? Color.white : Color.ink)
+            .padding(.horizontal, 6).padding(.vertical, 5)
+            .frame(width: Self.cell - 10)
+            .background(RoundedRectangle(cornerRadius: 10).fill(t.selected ? Color.line(line) : Color.white))
+            .overlay(RoundedRectangle(cornerRadius: 10).stroke(t.selected ? Color.clear : Color(hex: 0xC9D1E0), lineWidth: 1.5))
+        }
+        .accessibilityIdentifier("train-\(t.trainNo)")
     }
 }
 

@@ -28,7 +28,7 @@ NowStation/
 Shared/          Live Activity 데이터 모양(앱 + 위젯)
 NowStationWidget/ 잠금화면·다이나믹 아일랜드 그리기만
 ```
-- 탑승 시작 직후 **탄 열차를 사용자가 고른다**(`TrainPickScreen`, 서버 `GET /rides/{id}/trains` → `POST /rides/{id}/train`). 폰 움직임으로 맞히기는 "모르겠어요"일 때만: 걷는 중·늦게 켬에서 실패했다(2026-11-19 실기기)
+- 탑승 화면은 이번정거장처럼: 경로 구간 칩(태평 ▶ 선릉, 선릉 ▶ 강남) + 가로 노선도(`StripCard`, 15초마다)에서 서버가 골라 둔 다음 열차를 칠하고, 다른 열차를 누르면 바꾼다. 위 안내 띠(`RideTexts.banner`)가 골라 둠·탑승 확인·놓침·바꿈을 알린다(이번정거장에 없는 부분: 폰 움직임으로 확인)
 - 시간은 주입(`RideTracker(now:)`). 문구는 `RideTexts` 한곳(화면·잠금화면이 같이 씀)
 
 ## 확인

@@ -13,9 +13,9 @@ final class FakeRideRepository: RideRepository {
         sentMotions.append(motions)
         return try next.get()
     }
-    var choices: [TrainChoice] = []
+    var stripResult: TrainStrip?
     var chosen: [String] = []
-    func trains(rideId: String) async throws -> [TrainChoice] { choices }
+    func strip(rideId: String) async throws -> TrainStrip? { stripResult }
     func choose(rideId: String, line: String, trainNo: String) async throws -> RideView {
         chosen.append(trainNo)
         return try next.get()
@@ -45,31 +45,41 @@ final class RideTrackerTests: XCTestCase {
         XCTAssertEqual(tracker.state?.unsentMotions, 0)
     }
 
-    func test_시작하면_열차를_고르는_중이고_고르면_그_열차로_바로_탄다() async throws {
+    func test_노선도에서_다른_열차를_고르면_그_열차로_바꾼다() async throws {
         let repo = FakeRideRepository()
         let tracker = RideTracker(repository: repo, now: { self.t0 })
-        try await tracker.start(origin: "태평", destination: "왕십리")
-        XCTAssertEqual(tracker.state?.choosing, true)
+        repo.next = .success(RideView(rideId: "r1", status: .atStation, line: "수인분당선", thisStation: "모란", trainNo: "6206", confirmed: false))
+        try await tracker.start(origin: "태평", destination: "강남")
 
-        let mine = TrainChoice(line: "수인분당선", trainNo: "6050", station: "가천대", status: "ARRIVED", terminal: "왕십리", seenSecondsAgo: 12)
-        repo.choices = [mine]
-        let list = try await tracker.trains()
-        XCTAssertEqual(list, [mine])
+        let other = StripTrain(trainNo: "6208", station: "이매", status: "ARRIVED", terminal: "왕십리", selected: false, seenSecondsAgo: 5)
+        repo.stripResult = TrainStrip(leg: RideLeg(line: "수인분당선", from: "태평", to: "선릉"), stations: ["이매", "모란", "태평"], boardIndex: 2, trains: [other])
+        let strip = try await tracker.strip()
+        XCTAssertEqual(strip?.trains, [other])
 
-        repo.next = .success(RideView(rideId: "r1", status: .atStation, line: "수인분당선", thisStation: "가천대", nextStation: "복정"))
-        try await tracker.choose(mine)
-        XCTAssertEqual(repo.chosen, ["6050"])
-        XCTAssertEqual(tracker.state?.choosing, false)
-        XCTAssertEqual(tracker.state?.view.thisStation, "가천대")
+        repo.next = .success(RideView(rideId: "r1", status: .atStation, line: "수인분당선", thisStation: "이매", trainNo: "6208", confirmed: false))
+        try await tracker.choose(other, line: "수인분당선")
+        XCTAssertEqual(repo.chosen, ["6208"])
+        XCTAssertEqual(tracker.state?.view.trainNo, "6208")
     }
 
-    func test_모르겠어요면_고르지_않고_탑승은_계속() async throws {
-        let repo = FakeRideRepository()
-        let tracker = RideTracker(repository: repo)
-        try await tracker.start(origin: "태평", destination: "왕십리")
-        tracker.skipChoosing()
-        XCTAssertEqual(tracker.state?.choosing, false)
-        XCTAssertEqual(tracker.state?.view.status, .waiting)
+    func test_안내_띠는_골라_둠_확인_놓침을_구분한다() {
+        func banner(_ v: RideView) -> String {
+            RideTexts.banner(ActiveRide(origin: "태평", destination: "강남", view: v, online: true, updatedAt: t0, startedAt: t0))
+        }
+        XCTAssertEqual(banner(RideView(rideId: "r", status: .atStation, trainNo: "6206", confirmed: false)), "6206 열차를 골라 뒀어요. 다른 열차면 아래에서 눌러 주세요")
+        XCTAssertEqual(banner(RideView(rideId: "r", status: .moving, trainNo: "6206", confirmed: true)), "6206 열차 탑승 확인")
+        XCTAssertEqual(banner(RideView(rideId: "r", status: .atStation, trainNo: "6208", notice: .missed)), "열차를 놓치신 것 같아요. 다음 열차(6208)로 바꿨어요")
+        XCTAssertEqual(RideTexts.remaining(ActiveRide(origin: "태평", destination: "강남",
+            view: RideView(rideId: "r", status: .moving, target: "선릉", remainingStops: 6), online: true, updatedAt: t0, startedAt: t0)), "선릉까지 6정거장")
+    }
+
+    func test_서버_응답의_구간과_열차를_읽는다() throws {
+        let json = #"{"rideId":"r1","status":"MOVING","line":"수인분당선","thisStation":"수서","nextStation":"대모산입구","prepareToAlight":false,"legs":[{"line":"수인분당선","from":"태평","to":"선릉"},{"line":"2호선","from":"선릉","to":"강남"}],"trainNo":"6206","confirmed":true,"target":"선릉","remainingStops":6,"notice":"MISSED"}"#
+        let v = try JSONDecoder().decode(RideView.self, from: Data(json.utf8))
+        XCTAssertEqual(v.legs.map(\.to), ["선릉", "강남"])
+        XCTAssertEqual(v.remainingStops, 6)
+        XCTAssertEqual(v.notice, .missed)
+        XCTAssertTrue(v.confirmed)
     }
 
     func test_서버가_탑승을_모르면_끝내고_알린다() async throws {

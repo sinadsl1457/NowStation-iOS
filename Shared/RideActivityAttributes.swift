@@ -11,6 +11,8 @@ struct RideActivityAttributes: ActivityAttributes {
         var line: String?
         var prepareToAlight: Bool
         var online: Bool
+        /** 구간 끝(환승역·내릴 역)까지 남은 정거장. 아일랜드 왼쪽 숫자. */
+        var remaining: Int? = nil
     }
 
     var origin: String

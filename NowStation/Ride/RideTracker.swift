@@ -34,31 +34,23 @@ final class RideTracker {
         let view = try await repository.start(origin: origin, destination: destination)
         pending = []
         let t = now()
-        set(ActiveRide(origin: origin, destination: destination, view: view, online: true, updatedAt: t, startedAt: t, choosing: true))
+        set(ActiveRide(origin: origin, destination: destination, view: view, online: true, updatedAt: t, startedAt: t))
     }
 
-    /** 고를 열차 후보. 고르는 화면이 15초마다 부른다. */
-    func trains() async throws -> [TrainChoice] {
-        guard let ride = state else { return [] }
-        return try await repository.trains(rideId: ride.view.rideId)
+    /** 가로 노선도. 탑승 화면이 15초마다 부른다. */
+    func strip() async throws -> TrainStrip? {
+        guard let ride = state else { return nil }
+        return try await repository.strip(rideId: ride.view.rideId)
     }
 
-    /** 고른 열차에 바로 탄다. */
-    func choose(_ train: TrainChoice) async throws {
+    /** 노선도에서 다른 열차를 고른다(골라 둔 열차가 틀렸을 때). */
+    func choose(_ train: StripTrain, line: String) async throws {
         guard let ride = state else { return }
-        let view = try await repository.choose(rideId: ride.view.rideId, line: train.line, trainNo: train.trainNo)
+        let view = try await repository.choose(rideId: ride.view.rideId, line: line, trainNo: train.trainNo)
         guard var current = state, current.view.rideId == ride.view.rideId else { return }
         current.view = view
-        current.choosing = false
         current.online = true
         current.updatedAt = now()
-        set(current)
-    }
-
-    /** "모르겠어요": 고르지 않고 폰 움직임으로 찾게 둔다. */
-    func skipChoosing() {
-        guard var current = state else { return }
-        current.choosing = false
         set(current)
     }
 

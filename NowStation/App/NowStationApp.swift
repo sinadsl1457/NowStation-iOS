@@ -38,22 +38,10 @@ struct RootView: View {
 
     var body: some View {
         Group {
-            if let ride = tracker.state, ride.choosing {
-                TrainPickScreen(
-                    ride: ride,
-                    load: { try await tracker.trains() },
-                    onPick: { try await tracker.choose($0) },
-                    onUnsure: { tracker.skipChoosing() },
-                    // 아직 안 탔으면 탑승을 없던 일로 하고, 방금 경로를 칸에 다시 채워 둔다(타면 시작만 누르게)
-                    onNotYet: {
-                        Task {
-                            await tracker.end()
-                            if let route = home.recent.first { home.useRecent(route) }
-                        }
-                    }
-                )
-            } else if let ride = tracker.state {
-                RideScreen(ride: ride, probe: probe) { Task { await tracker.end() } }
+            if let ride = tracker.state {
+                RideScreen(ride: ride, probe: probe,
+                           loadStrip: { try await tracker.strip() },
+                           onPick: { try await tracker.choose($0, line: $1) }) { Task { await tracker.end() } }
             } else {
                 HomeView(vm: home)
             }

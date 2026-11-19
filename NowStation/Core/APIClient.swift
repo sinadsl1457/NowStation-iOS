@@ -36,6 +36,13 @@ final class APIClient {
         return try await send(URLRequest(url: components.url!))
     }
 
+    /** 204(내용 없음)면 nil. */
+    func getOptional<T: Decodable>(_ path: String) async throws -> T? {
+        let data = try await data(for: URLRequest(url: baseURL.appendingPathComponent(path)))
+        if data.isEmpty { return nil }
+        do { return try JSONDecoder().decode(T.self, from: data) } catch { throw APIError.decoding }
+    }
+
     func post<T: Decodable, B: Encodable>(_ path: String, body: B) async throws -> T {
         var request = URLRequest(url: baseURL.appendingPathComponent(path))
         request.httpMethod = "POST"

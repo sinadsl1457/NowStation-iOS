@@ -34,8 +34,14 @@ struct RideLiveActivity: Widget {
                     .frame(maxWidth: .infinity, alignment: .leading)
                 }
             } compactLeading: {
-                Image(systemName: s.prepareToAlight ? "flag.fill" : "tram.fill")
-                    .foregroundStyle(s.prepareToAlight ? Color.yellow : Color.line(s.line))
+                if let n = s.remaining, !s.prepareToAlight {
+                    // 남은 정거장 수(이번정거장처럼). 숫자가 줄어드는 게 한눈에 보이게
+                    Text("\(n)").font(.caption.weight(.heavy)).foregroundStyle(.white)
+                        .frame(width: 22, height: 22).background(Circle().stroke(Color.line(s.line), lineWidth: 2.5))
+                } else {
+                    Image(systemName: s.prepareToAlight ? "flag.fill" : "tram.fill")
+                        .foregroundStyle(s.prepareToAlight ? Color.yellow : Color.line(s.line))
+                }
             } compactTrailing: {
                 Text(s.chip ?? "…").font(.caption.weight(.bold)).lineLimit(1)
             } minimal: {
