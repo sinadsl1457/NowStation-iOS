@@ -1,0 +1,50 @@
+# CI: push·PR마다 프로젝트를 만들고(XcodeGen) 빌드 + 단위 테스트. 서명·배포는 없다
+# (무료 Apple 계정이라 TestFlight에 올릴 수 없고, 무료 서명은 맥에 폰을 꽂아야 만들어진다).
+# UI 테스트는 실제 서버에 붙어야 해서 여기서는 돌리지 않는다.
+name: iOS 테스트·빌드
+
+on:
+  push:
+    branches: [main]
+    paths-ignore: ["**.md", "docs/**"]
+  pull_request:
+    paths-ignore: ["**.md", "docs/**"]
+
+concurrency:
+  group: ios-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  test:
+    runs-on: macos-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Xcode 버전
+        run: xcodebuild -version
+
+      - name: 프로젝트 만들기(XcodeGen)
+        run: |
+          brew install xcodegen
+          xcodegen generate
+
+      - name: 시뮬레이터 고르기
+        # 러너마다 깔린 시뮬레이터가 달라서 있는 iPhone 중 하나를 고른다
+        run: |
+          id=$(xcrun simctl list devices available -j | python3 -c "
+          import json,sys
+          d=json.load(sys.stdin)['devices']
+          print(next(x['udid'] for k,v in d.items() if 'iOS' in k for x in v if x['name'].startswith('iPhone')))")
+          echo "SIM_ID=$id" >> "$GITHUB_ENV"
+          xcrun simctl list devices available | grep "$id"
+
+      - name: 빌드 + 단위 테스트
+        run: |
+          xcodebuild test \
+            -project NowStation.xcodeproj -scheme NowStation \
+            -destination "id=$SIM_ID" \
+            -only-testing:NowStationTests \
+            CODE_SIGNING_ALLOWED=NO \
+            | tee build.log | grep -E "error:|Test Case .*(passed|failed)|Executed|TEST (SUCCEEDED|FAILED)"
+          test "${PIPESTATUS[0]}" -eq 0
