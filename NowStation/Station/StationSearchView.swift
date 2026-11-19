@@ -70,7 +70,7 @@ struct StationSearchView: View {
     }
 }
 
-private struct StationRow: View {
+struct StationRow: View {
     let station: Station
     let query: String
     let chosen: Bool
@@ -82,8 +82,9 @@ private struct StationRow: View {
                 .frame(width: 40, height: 40)
                 .background(chosen ? Color.brand : Color.fieldFill, in: RoundedRectangle(cornerRadius: 12))
             highlighted.font(.system(size: 18)).foregroundStyle(Color.ink)
-            Spacer()
-            ForEach(station.lines, id: \.self) { LineChip(line: $0) }
+                .lineLimit(1).layoutPriority(1)
+            Spacer(minLength: 8)
+            LineChips(lines: station.lines)
         }
         .padding(12)
         .background(chosen ? Color.brandTint : .clear, in: RoundedRectangle(cornerRadius: 14))

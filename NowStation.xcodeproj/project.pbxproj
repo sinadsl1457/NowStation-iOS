@@ -30,6 +30,7 @@
 		BBA96EC713273DDAE871DFDE /* RideActivityAttributes.swift in Sources */ = {isa = PBXBuildFile; fileRef = 001ABF49647143E62532774F /* RideActivityAttributes.swift */; };
 		BF0DF56B08551030B15D21E3 /* Station.swift in Sources */ = {isa = PBXBuildFile; fileRef = 221D4152DB91D340DFC7A130 /* Station.swift */; };
 		BF0E4BDFD90274B4D5292C12 /* RideActivityAttributes.swift in Sources */ = {isa = PBXBuildFile; fileRef = 001ABF49647143E62532774F /* RideActivityAttributes.swift */; };
+		C652BC496CDBE34973DA864C /* LineChipRenderTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 020B872E18A33A5093B6E981 /* LineChipRenderTests.swift */; };
 		E9862B45F7C8E049568BA4F6 /* Theme.swift in Sources */ = {isa = PBXBuildFile; fileRef = 663147FC2C46F6AE0755F1E1 /* Theme.swift */; };
 /* End PBXBuildFile section */
 
@@ -73,6 +74,7 @@
 
 /* Begin PBXFileReference section */
 		001ABF49647143E62532774F /* RideActivityAttributes.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RideActivityAttributes.swift; sourceTree = "<group>"; };
+		020B872E18A33A5093B6E981 /* LineChipRenderTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LineChipRenderTests.swift; sourceTree = "<group>"; };
 		17755099C48B3946BF625DA5 /* RideTexts.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RideTexts.swift; sourceTree = "<group>"; };
 		18B2EE971D653D8DA0E35FC1 /* APIClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APIClient.swift; sourceTree = "<group>"; };
 		20C39AE56EF25A28C7053D00 /* RideTracker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RideTracker.swift; sourceTree = "<group>"; };
@@ -146,6 +148,7 @@
 		473893F09365BA774A454101 /* NowStationTests */ = {
 			isa = PBXGroup;
 			children = (
+				020B872E18A33A5093B6E981 /* LineChipRenderTests.swift */,
 				7B8C7B8C887FBD473FA6363E /* MotionDetectorTests.swift */,
 				A9078D18D44D1656584BADBC /* RideScreenRenderTests.swift */,
 				AD9CF8586E24C2A42AF0E2D7 /* RideTrackerTests.swift */,
@@ -412,6 +415,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				C652BC496CDBE34973DA864C /* LineChipRenderTests.swift in Sources */,
 				51ACCA91E345BA53CF8C58CC /* MotionDetectorTests.swift in Sources */,
 				040920612EB89A1ADF09706E /* RideScreenRenderTests.swift in Sources */,
 				01E51A1EBA11FA22D8F60214 /* RideTrackerTests.swift in Sources */,

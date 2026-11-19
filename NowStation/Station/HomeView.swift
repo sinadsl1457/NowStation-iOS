@@ -9,7 +9,7 @@ struct HomeView: View {
             VStack(spacing: 0) {
                 Header()
                 VStack(alignment: .leading, spacing: 24) {
-                    RouteCard(vm: vm)
+                    HomeRouteCard(vm: vm)
                     if vm.recent.isEmpty { HowItWorks() } else { RecentRoutes(vm: vm) }
                     if !vm.lines.isEmpty { SupportedLines(lines: vm.lines) }
                     // 공공데이터 이용 조건: 출처 표시
@@ -88,7 +88,7 @@ private struct TrackDecoration: View {
     }
 }
 
-private struct RouteCard: View {
+struct HomeRouteCard: View {
     @Bindable var vm: HomeViewModel
 
     var body: some View {
@@ -136,9 +136,11 @@ private struct StationField: View {
                 Text(station?.name ?? "고르기")
                     .font(.system(size: 19, weight: station == nil ? .regular : .bold))
                     .foregroundStyle(station == nil ? Color.muted : Color.ink)
+                    .lineLimit(1)
             }
-            Spacer()
-            ForEach(station?.lines ?? [], id: \.self) { LineChip(line: $0) }
+            .layoutPriority(1)
+            Spacer(minLength: 8)
+            if let lines = station?.lines { LineChips(lines: lines) }
             if let onClear {
                 Button(action: onClear) { Image(systemName: "xmark").foregroundStyle(Color.muted) }
                     .accessibilityLabel("내릴 역 지우기")
