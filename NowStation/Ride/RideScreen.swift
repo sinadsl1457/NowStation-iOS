@@ -90,22 +90,21 @@ private struct RidingContent: View {
     }
 }
 
-/** 골라 둔 열차를 폰이 확인했는지·놓쳤는지(이번정거장은 고른 열차를 그대로 따라가기만 한다). */
+/** 따라가는 열차와 환승 안내. */
 private struct BannerView: View {
     let ride: ActiveRide
 
     var body: some View {
         let v = ride.view
-        let ok = v.confirmed && v.notice == nil
-        let warn = v.notice != nil
+        let warn = v.notice == .transfer
         HStack(spacing: 8) {
-            Image(systemName: ok ? "checkmark.circle.fill" : warn ? "arrow.triangle.2.circlepath" : "hand.tap")
+            Image(systemName: warn ? "arrow.triangle.2.circlepath" : "tram.fill")
             Text(RideTexts.banner(ride)).font(.system(size: 14, weight: .semibold)).fixedSize(horizontal: false, vertical: true)
         }
-        .foregroundStyle(ok ? Color(hex: 0x14804A) : warn ? Color(hex: 0xB45309) : Color.brand)
+        .foregroundStyle(warn ? Color(hex: 0xB45309) : Color.brand)
         .padding(.horizontal, 14).padding(.vertical, 10)
         .frame(maxWidth: .infinity, alignment: .leading)
-        .background(RoundedRectangle(cornerRadius: 14).fill(ok ? Color(hex: 0xE7F6EE) : warn ? Color(hex: 0xFFF4E5) : Color.brandTint))
+        .background(RoundedRectangle(cornerRadius: 14).fill(warn ? Color(hex: 0xFFF4E5) : Color.brandTint))
         .accessibilityElement(children: .combine)
         .accessibilityIdentifier("ride-banner")
     }
@@ -301,11 +300,11 @@ private struct AlightContent: View {
             }
             Spacer()
             Ripple()
-            Text("내릴 준비하세요").font(.system(size: 30, weight: .black)).padding(.top, 18)
+            Text(RideTexts.isTransfer(ride) ? "갈아탈 준비하세요" : "내릴 준비하세요").font(.system(size: 30, weight: .black)).padding(.top, 18)
             Text("이번 역").font(.system(size: 16)).opacity(0.85).padding(.top, 10)
             Text(v.thisStation ?? "").font(.system(size: 76, weight: .black))
                 .scaleEffect(grown ? 1 : 0.85)
-            Text("내리실 역이에요").font(.system(size: 16)).opacity(0.9)
+            Text(RideTexts.isTransfer(ride) ? "여기서 갈아타세요" : "내리실 역이에요").font(.system(size: 16)).opacity(0.9)
             if let next = v.nextStation {
                 Text("다음 역 \(next)").font(.system(size: 15)).opacity(0.7).padding(.top, 20)
             }

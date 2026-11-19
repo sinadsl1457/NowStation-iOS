@@ -12,18 +12,16 @@ struct RideView: Equatable, Decodable {
     var legs: [RideLeg] = []
     /** 따라가는(골라 둔) 열차 번호. */
     var trainNo: String?
-    /** false면 골라 두기만 한 열차(타는 역을 떠날 때 폰과 맞춰 확정). */
-    var confirmed = false
     /** 이번 구간 끝(환승역·내릴 역)과 남은 정거장. */
     var target: String?
     var remainingStops: Int?
     /** 놓침·바꿈을 잠깐 알린다. */
     var notice: RideNoticeKind?
 
-    enum CodingKeys: String, CodingKey { case rideId, status, line, thisStation, nextStation, prepareToAlight, legs, trainNo, confirmed, target, remainingStops, notice }
+    enum CodingKeys: String, CodingKey { case rideId, status, line, thisStation, nextStation, prepareToAlight, legs, trainNo, target, remainingStops, notice }
 
     init(rideId: String, status: RideStatus, line: String? = nil, thisStation: String? = nil, nextStation: String? = nil, prepareToAlight: Bool = false,
-         legs: [RideLeg] = [], trainNo: String? = nil, confirmed: Bool = false, target: String? = nil, remainingStops: Int? = nil, notice: RideNoticeKind? = nil) {
+         legs: [RideLeg] = [], trainNo: String? = nil, target: String? = nil, remainingStops: Int? = nil, notice: RideNoticeKind? = nil) {
         self.rideId = rideId
         self.status = status
         self.line = line
@@ -32,7 +30,6 @@ struct RideView: Equatable, Decodable {
         self.prepareToAlight = prepareToAlight
         self.legs = legs
         self.trainNo = trainNo
-        self.confirmed = confirmed
         self.target = target
         self.remainingStops = remainingStops
         self.notice = notice
@@ -48,7 +45,6 @@ struct RideView: Equatable, Decodable {
         prepareToAlight = try c.decodeIfPresent(Bool.self, forKey: .prepareToAlight) ?? false
         legs = try c.decodeIfPresent([RideLeg].self, forKey: .legs) ?? []
         trainNo = try c.decodeIfPresent(String.self, forKey: .trainNo)
-        confirmed = try c.decodeIfPresent(Bool.self, forKey: .confirmed) ?? false
         target = try c.decodeIfPresent(String.self, forKey: .target)
         remainingStops = try c.decodeIfPresent(Int.self, forKey: .remainingStops)
         notice = try c.decodeIfPresent(String.self, forKey: .notice).flatMap(RideNoticeKind.init(rawValue:))
@@ -73,8 +69,8 @@ struct RideLeg: Equatable, Decodable, Hashable {
     var to: String
 }
 
-/** MISSED: 골라 둔 열차를 놓쳐 다음 열차로 바꿈, SWITCHED: 폰과 같이 출발한 다른 열차로 바꿈. */
-enum RideNoticeKind: String { case missed = "MISSED", switched = "SWITCHED" }
+/** TRANSFER: 환승역에 도착(다음 구간 열차를 골라 둠). */
+enum RideNoticeKind: String { case transfer = "TRANSFER" }
 
 /** 가로 노선도: 지금 구간 방향의 역(타는 역 몇 정거장 전부터 구간 끝까지)과 그 위 열차. 이번정거장과 같은 배치. */
 struct TrainStrip: Equatable, Decodable {

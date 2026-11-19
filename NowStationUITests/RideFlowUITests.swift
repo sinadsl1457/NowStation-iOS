@@ -38,7 +38,7 @@ final class RideFlowUITests: XCTestCase {
         XCTAssertTrue(app.staticTexts["선릉 ▶ 강남"].exists, "선릉에서 2호선으로 강남")
         let trains = app.buttons.matching(NSPredicate(format: "identifier BEGINSWITH 'train-'"))
         XCTAssertTrue(trains.firstMatch.waitForExistence(timeout: 15), "노선도에 열차가 보여야 한다")
-        XCTAssertTrue((banner.label as String).contains("골라 뒀어요"), "시작하자마자 다음 열차를 골라 둔다: \(banner.label)")
+        XCTAssertTrue((banner.label as String).contains("따라가고 있어요"), "시작하자마자 다음 열차를 골라 따라간다: \(banner.label)")
         snap(app, "4-골라-둔-열차")
 
         let before = banner.label

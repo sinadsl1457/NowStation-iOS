@@ -4,7 +4,7 @@ import Foundation
 enum RideTexts {
     static func title(_ ride: ActiveRide) -> String {
         let v = ride.view
-        if v.prepareToAlight, let s = v.thisStation { return "곧 \(s), 내릴 준비하세요" }
+        if v.prepareToAlight, let s = v.thisStation { return isTransfer(ride) ? "곧 \(s), 갈아탈 준비하세요" : "곧 \(s), 내릴 준비하세요" }
         if v.status == .waiting { return "\(v.thisStation ?? ride.origin)역에서 기다리는 중" }
         if v.status == .stale || v.thisStation == nil { return "위치 확인 중" }
         return "이번 역 \(v.thisStation!)"
@@ -54,17 +54,21 @@ enum RideTexts {
     /** 노선도 위 열차 이름표: "왕십리행". */
     static func terminal(_ t: StripTrain) -> String { t.terminal.map { "\($0)행" } ?? "" }
 
-    /** 화면 위 안내 띠. 골라 둔 열차를 폰이 확인했는지, 놓쳤는지를 알려 준다(이번정거장에 없는 부분). */
+    /** 이번 구간 끝이 갈아탈 역인가(내릴 역이 아니라). */
+    static func isTransfer(_ ride: ActiveRide) -> Bool {
+        guard let target = ride.view.target, let destination = ride.destination else { return false }
+        return target != destination
+    }
+
+    /** 화면 위 안내 띠: 따라가는 열차, 환승역 도착. 고른 열차는 그대로 따라간다(탔으면 가는 것). */
     static func banner(_ ride: ActiveRide) -> String {
         let v = ride.view
-        let no = v.trainNo ?? ""
-        switch v.notice {
-        case .missed: return "열차를 놓치신 것 같아요. 다음 열차(\(no))로 바꿨어요"
-        case .switched: return "폰과 같이 출발한 \(no) 열차로 바꿨어요"
-        case nil: break
+        guard let no = v.trainNo else { return "탄 열차를 아래 노선도에서 골라 주세요" }
+        if v.notice == .transfer {
+            let line = v.line ?? ""
+            return "갈아타세요: \(line) \(v.target ?? "") 방면 \(no) 열차를 골라 뒀어요. 다른 열차면 아래에서 눌러 주세요"
         }
-        if v.trainNo == nil { return "탄 열차를 아래 노선도에서 골라 주세요" }
-        return v.confirmed ? "\(no) 열차 탑승 확인" : "\(no) 열차를 골라 뒀어요. 다른 열차면 아래에서 눌러 주세요"
+        return "\(no) 열차를 따라가고 있어요. 다른 열차면 아래에서 눌러 주세요"
     }
 
     /** "13:43 탑승"의 시각. 24시간제(오후 1시가 "01:43"으로 보이던 문제), Android와 같게. */

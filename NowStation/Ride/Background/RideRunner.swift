@@ -141,7 +141,7 @@ final class RideRunner: NSObject {
             if alert {
                 // 잠금화면이 켜지며 알림처럼 보인다(APNs 없이 앱이 직접 갱신)
                 let config = AlertConfiguration(title: "곧 \(ride.view.thisStation ?? "")",
-                                                body: "내릴 준비하세요", sound: .default)
+                                                body: RideTexts.isTransfer(ride) ? "갈아탈 준비하세요" : "내릴 준비하세요", sound: .default)
                 await activity.update(content, alertConfiguration: config)
             } else {
                 await activity.update(content)
