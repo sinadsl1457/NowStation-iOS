@@ -13,6 +13,13 @@ final class FakeRideRepository: RideRepository {
         sentMotions.append(motions)
         return try next.get()
     }
+    var choices: [TrainChoice] = []
+    var chosen: [String] = []
+    func trains(rideId: String) async throws -> [TrainChoice] { choices }
+    func choose(rideId: String, line: String, trainNo: String) async throws -> RideView {
+        chosen.append(trainNo)
+        return try next.get()
+    }
     func end(rideId: String) async throws { ended.append(rideId) }
 }
 
@@ -36,6 +43,33 @@ final class RideTrackerTests: XCTestCase {
         XCTAssertEqual(repo.sentMotions.last?.count, 1, "다시 연결되면 쌓인 움직임을 보낸다")
         XCTAssertEqual(tracker.state?.online, true)
         XCTAssertEqual(tracker.state?.unsentMotions, 0)
+    }
+
+    func test_시작하면_열차를_고르는_중이고_고르면_그_열차로_바로_탄다() async throws {
+        let repo = FakeRideRepository()
+        let tracker = RideTracker(repository: repo, now: { self.t0 })
+        try await tracker.start(origin: "태평", destination: "왕십리")
+        XCTAssertEqual(tracker.state?.choosing, true)
+
+        let mine = TrainChoice(line: "수인분당선", trainNo: "6050", station: "가천대", status: "ARRIVED", terminal: "왕십리", seenSecondsAgo: 12)
+        repo.choices = [mine]
+        let list = try await tracker.trains()
+        XCTAssertEqual(list, [mine])
+
+        repo.next = .success(RideView(rideId: "r1", status: .atStation, line: "수인분당선", thisStation: "가천대", nextStation: "복정"))
+        try await tracker.choose(mine)
+        XCTAssertEqual(repo.chosen, ["6050"])
+        XCTAssertEqual(tracker.state?.choosing, false)
+        XCTAssertEqual(tracker.state?.view.thisStation, "가천대")
+    }
+
+    func test_모르겠어요면_고르지_않고_탑승은_계속() async throws {
+        let repo = FakeRideRepository()
+        let tracker = RideTracker(repository: repo)
+        try await tracker.start(origin: "태평", destination: "왕십리")
+        tracker.skipChoosing()
+        XCTAssertEqual(tracker.state?.choosing, false)
+        XCTAssertEqual(tracker.state?.view.status, .waiting)
     }
 
     func test_서버가_탑승을_모르면_끝내고_알린다() async throws {

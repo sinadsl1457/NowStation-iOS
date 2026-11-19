@@ -43,6 +43,18 @@ enum RideStatus: String {
     case unknown = "UNKNOWN"
 }
 
+/** 지금 탄 열차로 고를 수 있는 열차 하나(서버가 출발역에 가까운 순으로 준다). */
+struct TrainChoice: Equatable, Decodable, Identifiable {
+    var line: String
+    var trainNo: String
+    var station: String
+    /** ENTERING(진입)·ARRIVED(도착)·DEPARTED(출발) 등 */
+    var status: String
+    var terminal: String?
+    var seenSecondsAgo: Int
+    var id: String { "\(line)-\(trainNo)" }
+}
+
 enum MotionKind: String, Encodable { case moving = "MOVING", stopped = "STOPPED" }
 
 /** 폰이 느낀 출발·정차. */
@@ -60,6 +72,8 @@ struct ActiveRide: Equatable {
     var updatedAt: Date
     var unsentMotions: Int = 0
     var startedAt: Date
+    /** 탄 열차를 고르는 중(시작 직후). 고르거나 "모르겠어요"면 false. */
+    var choosing: Bool = false
 
     /** 내릴 역 알림이 막 켜졌나. 환승 뒤 다시 켜지면 또 울린다. */
     static func alightAlertStarted(before: ActiveRide?, after: ActiveRide?) -> Bool {
@@ -73,6 +87,8 @@ protocol RideRepository {
     func start(origin: String, destination: String?) async throws -> RideView
     func get(rideId: String) async throws -> RideView
     func sendMotion(rideId: String, motions: [Motion], sentAt: Date) async throws -> RideView
+    func trains(rideId: String) async throws -> [TrainChoice]
+    func choose(rideId: String, line: String, trainNo: String) async throws -> RideView
     func end(rideId: String) async throws
 }
 
@@ -82,6 +98,7 @@ struct RemoteRideRepository: RideRepository {
 
     private struct StartBody: Encodable { let originStation: String; let destinationStation: String? }
     private struct MotionBody: Encodable { let events: [Motion]; let sentAt: Date }
+    private struct ChooseBody: Encodable { let line: String; let trainNo: String }
 
     func start(origin: String, destination: String?) async throws -> RideView {
         try await api.post("api/rides", body: StartBody(originStation: origin, destinationStation: destination))
@@ -93,6 +110,14 @@ struct RemoteRideRepository: RideRepository {
 
     func sendMotion(rideId: String, motions: [Motion], sentAt: Date) async throws -> RideView {
         try await api.post("api/rides/\(rideId)/motion", body: MotionBody(events: motions, sentAt: sentAt))
+    }
+
+    func trains(rideId: String) async throws -> [TrainChoice] {
+        try await api.get("api/rides/\(rideId)/trains")
+    }
+
+    func choose(rideId: String, line: String, trainNo: String) async throws -> RideView {
+        try await api.post("api/rides/\(rideId)/train", body: ChooseBody(line: line, trainNo: trainNo))
     }
 
     func end(rideId: String) async throws {

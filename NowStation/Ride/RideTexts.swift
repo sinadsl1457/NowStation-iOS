@@ -45,6 +45,23 @@ enum RideTexts {
         }
     }
 
+    /** 고를 열차 한 줄: "가천대 도착". 공공 데이터 상태 그대로(수인분당선은 출발을 주지 않는다). */
+    static func trainPlace(_ t: TrainChoice) -> String {
+        switch t.status {
+        case "ENTERING": return "\(t.station) 진입 중"
+        case "ARRIVED": return "\(t.station) 도착"
+        case "DEPARTED": return "\(t.station) 출발"
+        default: return t.station
+        }
+    }
+
+    static func trainTerminal(_ t: TrainChoice) -> String? { t.terminal.map { "\($0)행" } }
+
+    /** 목록이 얼마나 오래된 정보인지(공공 데이터가 늦어 한두 정거장 뒤로 보일 수 있음). */
+    static func seenAgo(_ seconds: Int) -> String {
+        seconds < 60 ? "\(seconds)초 전 기준" : "\(seconds / 60)분 전 기준"
+    }
+
     /** "13:43 탑승"의 시각. 24시간제(오후 1시가 "01:43"으로 보이던 문제), Android와 같게. */
     static func boardedTime(_ date: Date, timeZone: TimeZone = .current) -> String {
         let f = DateFormatter()

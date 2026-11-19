@@ -34,7 +34,32 @@ final class RideTracker {
         let view = try await repository.start(origin: origin, destination: destination)
         pending = []
         let t = now()
-        set(ActiveRide(origin: origin, destination: destination, view: view, online: true, updatedAt: t, startedAt: t))
+        set(ActiveRide(origin: origin, destination: destination, view: view, online: true, updatedAt: t, startedAt: t, choosing: true))
+    }
+
+    /** 고를 열차 후보. 고르는 화면이 15초마다 부른다. */
+    func trains() async throws -> [TrainChoice] {
+        guard let ride = state else { return [] }
+        return try await repository.trains(rideId: ride.view.rideId)
+    }
+
+    /** 고른 열차에 바로 탄다. */
+    func choose(_ train: TrainChoice) async throws {
+        guard let ride = state else { return }
+        let view = try await repository.choose(rideId: ride.view.rideId, line: train.line, trainNo: train.trainNo)
+        guard var current = state, current.view.rideId == ride.view.rideId else { return }
+        current.view = view
+        current.choosing = false
+        current.online = true
+        current.updatedAt = now()
+        set(current)
+    }
+
+    /** "모르겠어요": 고르지 않고 폰 움직임으로 찾게 둔다. */
+    func skipChoosing() {
+        guard var current = state else { return }
+        current.choosing = false
+        set(current)
     }
 
     /** 몇 초마다 부른다. 못 보낸 움직임이 있으면 그것부터 보낸다. */
