@@ -1,0 +1,761 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 77;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		01C800F87B4FC7AE3EC29D5F /* RideFlowUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2A6490E1B6844831DCDA3C1 /* RideFlowUITests.swift */; };
+		01E51A1EBA11FA22D8F60214 /* RideTrackerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD9CF8586E24C2A42AF0E2D7 /* RideTrackerTests.swift */; };
+		040920612EB89A1ADF09706E /* RideScreenRenderTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A9078D18D44D1656584BADBC /* RideScreenRenderTests.swift */; };
+		0E340B4DC7021DA62D97773F /* RideTracker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20C39AE56EF25A28C7053D00 /* RideTracker.swift */; };
+		2351249B090F191B470D1422 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 69E13FA465756E19953AAE80 /* Assets.xcassets */; };
+		26FA5FC3E33337A703797AED /* HomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FDB0EE34E99A4D3A69036EA /* HomeView.swift */; };
+		296B093FA6AA8BA80D74F663 /* StationSearchView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8EAC0BB0AE55758969FC0A82 /* StationSearchView.swift */; };
+		351F225899C575DD3AC65EBA /* RideRunner.swift in Sources */ = {isa = PBXBuildFile; fileRef = 36B5D2EEA109642CC5ED98E7 /* RideRunner.swift */; };
+		3732F0A0149221BACDC0AA95 /* HomeViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = E22EA8A0120E6DA3A20DEBDE /* HomeViewModel.swift */; };
+		4A5398AE5FD5FC8DC31CDD2B /* RideLiveActivity.swift in Sources */ = {isa = PBXBuildFile; fileRef = C63929FD0A5C12C70AF5B316 /* RideLiveActivity.swift */; };
+		51ACCA91E345BA53CF8C58CC /* MotionDetectorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7B8C7B8C887FBD473FA6363E /* MotionDetectorTests.swift */; };
+		59824F54E6E27594305160A7 /* Ride.swift in Sources */ = {isa = PBXBuildFile; fileRef = ED74B6D0EBE16A23344FB4C2 /* Ride.swift */; };
+		59A56111CC75F82ECE15F786 /* APIClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 18B2EE971D653D8DA0E35FC1 /* APIClient.swift */; };
+		64A3330F07C678FD5AE62CF2 /* RideScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = 32AD9C2E5A747FF957A17676 /* RideScreen.swift */; };
+		85C7DB377626BE8AD25AAB7A /* Theme.swift in Sources */ = {isa = PBXBuildFile; fileRef = 663147FC2C46F6AE0755F1E1 /* Theme.swift */; };
+		866055191B05B742D8364186 /* NowStationWidget.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 64120F34564FC4E30F1BBAE1 /* NowStationWidget.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		98FB7A527A5A98C798A17F80 /* MotionDetector.swift in Sources */ = {isa = PBXBuildFile; fileRef = E18E6FEB81DAC9390F16DCDB /* MotionDetector.swift */; };
+		A319DF87BEAF67C5881E529E /* NowStationApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = B933E62CE10224DAA8A6CE35 /* NowStationApp.swift */; };
+		B63ECBBFE01C8AEC6C59E0BC /* RideTexts.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17755099C48B3946BF625DA5 /* RideTexts.swift */; };
+		BBA96EC713273DDAE871DFDE /* RideActivityAttributes.swift in Sources */ = {isa = PBXBuildFile; fileRef = 001ABF49647143E62532774F /* RideActivityAttributes.swift */; };
+		BF0DF56B08551030B15D21E3 /* Station.swift in Sources */ = {isa = PBXBuildFile; fileRef = 221D4152DB91D340DFC7A130 /* Station.swift */; };
+		BF0E4BDFD90274B4D5292C12 /* RideActivityAttributes.swift in Sources */ = {isa = PBXBuildFile; fileRef = 001ABF49647143E62532774F /* RideActivityAttributes.swift */; };
+		E9862B45F7C8E049568BA4F6 /* Theme.swift in Sources */ = {isa = PBXBuildFile; fileRef = 663147FC2C46F6AE0755F1E1 /* Theme.swift */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		6A76410FE8E9819D85AAF3EF /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 22C81AF681EF95D1C4B47A14 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = A2AE6ADD85600EC8625F0AC9;
+			remoteInfo = NowStation;
+		};
+		B92D768EF1E1CA08F4C9E439 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 22C81AF681EF95D1C4B47A14 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = A2AE6ADD85600EC8625F0AC9;
+			remoteInfo = NowStation;
+		};
+		FF5F670B4F0127954F12F65A /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 22C81AF681EF95D1C4B47A14 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = C67385F29EDB90AE642712FA;
+			remoteInfo = NowStationWidget;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		E3608B36B14AF707EBD72E46 /* Embed Foundation Extensions */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 13;
+			files = (
+				866055191B05B742D8364186 /* NowStationWidget.appex in Embed Foundation Extensions */,
+			);
+			name = "Embed Foundation Extensions";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
+/* Begin PBXFileReference section */
+		001ABF49647143E62532774F /* RideActivityAttributes.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RideActivityAttributes.swift; sourceTree = "<group>"; };
+		17755099C48B3946BF625DA5 /* RideTexts.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RideTexts.swift; sourceTree = "<group>"; };
+		18B2EE971D653D8DA0E35FC1 /* APIClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APIClient.swift; sourceTree = "<group>"; };
+		20C39AE56EF25A28C7053D00 /* RideTracker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RideTracker.swift; sourceTree = "<group>"; };
+		221D4152DB91D340DFC7A130 /* Station.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Station.swift; sourceTree = "<group>"; };
+		32AD9C2E5A747FF957A17676 /* RideScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RideScreen.swift; sourceTree = "<group>"; };
+		36B5D2EEA109642CC5ED98E7 /* RideRunner.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RideRunner.swift; sourceTree = "<group>"; };
+		4669C85DCA27A45C81613DC8 /* App.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = App.xcconfig; sourceTree = "<group>"; };
+		64120F34564FC4E30F1BBAE1 /* NowStationWidget.appex */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = "wrapper.app-extension"; path = NowStationWidget.appex; sourceTree = BUILT_PRODUCTS_DIR; };
+		663147FC2C46F6AE0755F1E1 /* Theme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Theme.swift; sourceTree = "<group>"; };
+		69E13FA465756E19953AAE80 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		7B8C7B8C887FBD473FA6363E /* MotionDetectorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MotionDetectorTests.swift; sourceTree = "<group>"; };
+		8997374C66FBEA6EA8196C78 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
+		8EAC0BB0AE55758969FC0A82 /* StationSearchView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StationSearchView.swift; sourceTree = "<group>"; };
+		8FDB0EE34E99A4D3A69036EA /* HomeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeView.swift; sourceTree = "<group>"; };
+		A2A6490E1B6844831DCDA3C1 /* RideFlowUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RideFlowUITests.swift; sourceTree = "<group>"; };
+		A9078D18D44D1656584BADBC /* RideScreenRenderTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RideScreenRenderTests.swift; sourceTree = "<group>"; };
+		AD9CF8586E24C2A42AF0E2D7 /* RideTrackerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RideTrackerTests.swift; sourceTree = "<group>"; };
+		B933E62CE10224DAA8A6CE35 /* NowStationApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NowStationApp.swift; sourceTree = "<group>"; };
+		C63929FD0A5C12C70AF5B316 /* RideLiveActivity.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RideLiveActivity.swift; sourceTree = "<group>"; };
+		D49BBB646C4E1993E3667400 /* NowStation.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = NowStation.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		D99314D39BEFD80984F67B90 /* NowStationUITests.xctest */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.cfbundle; path = NowStationUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		E18E6FEB81DAC9390F16DCDB /* MotionDetector.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MotionDetector.swift; sourceTree = "<group>"; };
+		E1AF08DF07AFFDD98C2517C5 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
+		E22EA8A0120E6DA3A20DEBDE /* HomeViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeViewModel.swift; sourceTree = "<group>"; };
+		ED74B6D0EBE16A23344FB4C2 /* Ride.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Ride.swift; sourceTree = "<group>"; };
+		F7B440CAB7049A0ABF78A1A3 /* NowStationTests.xctest */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.cfbundle; path = NowStationTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+/* End PBXFileReference section */
+
+/* Begin PBXGroup section */
+		0C31E7F8E14361D5BFECB610 /* Background */ = {
+			isa = PBXGroup;
+			children = (
+				36B5D2EEA109642CC5ED98E7 /* RideRunner.swift */,
+			);
+			path = Background;
+			sourceTree = "<group>";
+		};
+		0E346822CCE09A8C6A7AD743 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				D49BBB646C4E1993E3667400 /* NowStation.app */,
+				F7B440CAB7049A0ABF78A1A3 /* NowStationTests.xctest */,
+				D99314D39BEFD80984F67B90 /* NowStationUITests.xctest */,
+				64120F34564FC4E30F1BBAE1 /* NowStationWidget.appex */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		1C7B16A0642299185A762EF7 /* NowStation */ = {
+			isa = PBXGroup;
+			children = (
+				69E13FA465756E19953AAE80 /* Assets.xcassets */,
+				E1AF08DF07AFFDD98C2517C5 /* Info.plist */,
+				C317ECB15528E3C7937B05BC /* App */,
+				E0807DE726519354B4C1DE4E /* Core */,
+				DF352EBE14AEBE67CE34075A /* Ride */,
+				66C20940EF724AC9742DD1BD /* Station */,
+			);
+			path = NowStation;
+			sourceTree = "<group>";
+		};
+		37BF041B006FE19B60399873 /* Shared */ = {
+			isa = PBXGroup;
+			children = (
+				001ABF49647143E62532774F /* RideActivityAttributes.swift */,
+			);
+			path = Shared;
+			sourceTree = "<group>";
+		};
+		473893F09365BA774A454101 /* NowStationTests */ = {
+			isa = PBXGroup;
+			children = (
+				7B8C7B8C887FBD473FA6363E /* MotionDetectorTests.swift */,
+				A9078D18D44D1656584BADBC /* RideScreenRenderTests.swift */,
+				AD9CF8586E24C2A42AF0E2D7 /* RideTrackerTests.swift */,
+			);
+			path = NowStationTests;
+			sourceTree = "<group>";
+		};
+		589C8144041CB878A108B95E = {
+			isa = PBXGroup;
+			children = (
+				861CEF9CCECB6E6F74660C17 /* Config */,
+				1C7B16A0642299185A762EF7 /* NowStation */,
+				473893F09365BA774A454101 /* NowStationTests */,
+				92CA23950776573E95B99FD1 /* NowStationUITests */,
+				D760430FC89833BA14AF3BE2 /* NowStationWidget */,
+				37BF041B006FE19B60399873 /* Shared */,
+				0E346822CCE09A8C6A7AD743 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		66C20940EF724AC9742DD1BD /* Station */ = {
+			isa = PBXGroup;
+			children = (
+				8FDB0EE34E99A4D3A69036EA /* HomeView.swift */,
+				E22EA8A0120E6DA3A20DEBDE /* HomeViewModel.swift */,
+				221D4152DB91D340DFC7A130 /* Station.swift */,
+				8EAC0BB0AE55758969FC0A82 /* StationSearchView.swift */,
+			);
+			path = Station;
+			sourceTree = "<group>";
+		};
+		861CEF9CCECB6E6F74660C17 /* Config */ = {
+			isa = PBXGroup;
+			children = (
+				4669C85DCA27A45C81613DC8 /* App.xcconfig */,
+			);
+			path = Config;
+			sourceTree = "<group>";
+		};
+		92CA23950776573E95B99FD1 /* NowStationUITests */ = {
+			isa = PBXGroup;
+			children = (
+				A2A6490E1B6844831DCDA3C1 /* RideFlowUITests.swift */,
+			);
+			path = NowStationUITests;
+			sourceTree = "<group>";
+		};
+		B1B0FDDFDA6E3EF0BFE5379D /* Motion */ = {
+			isa = PBXGroup;
+			children = (
+				E18E6FEB81DAC9390F16DCDB /* MotionDetector.swift */,
+			);
+			path = Motion;
+			sourceTree = "<group>";
+		};
+		C317ECB15528E3C7937B05BC /* App */ = {
+			isa = PBXGroup;
+			children = (
+				B933E62CE10224DAA8A6CE35 /* NowStationApp.swift */,
+			);
+			path = App;
+			sourceTree = "<group>";
+		};
+		D760430FC89833BA14AF3BE2 /* NowStationWidget */ = {
+			isa = PBXGroup;
+			children = (
+				8997374C66FBEA6EA8196C78 /* Info.plist */,
+				C63929FD0A5C12C70AF5B316 /* RideLiveActivity.swift */,
+			);
+			path = NowStationWidget;
+			sourceTree = "<group>";
+		};
+		DF352EBE14AEBE67CE34075A /* Ride */ = {
+			isa = PBXGroup;
+			children = (
+				ED74B6D0EBE16A23344FB4C2 /* Ride.swift */,
+				32AD9C2E5A747FF957A17676 /* RideScreen.swift */,
+				17755099C48B3946BF625DA5 /* RideTexts.swift */,
+				20C39AE56EF25A28C7053D00 /* RideTracker.swift */,
+				0C31E7F8E14361D5BFECB610 /* Background */,
+				B1B0FDDFDA6E3EF0BFE5379D /* Motion */,
+			);
+			path = Ride;
+			sourceTree = "<group>";
+		};
+		E0807DE726519354B4C1DE4E /* Core */ = {
+			isa = PBXGroup;
+			children = (
+				18B2EE971D653D8DA0E35FC1 /* APIClient.swift */,
+				663147FC2C46F6AE0755F1E1 /* Theme.swift */,
+			);
+			path = Core;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		7A5907E99E9840B049F8B603 /* NowStationTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 4B2145AFED6F5270F88A9EBF /* Build configuration list for PBXNativeTarget "NowStationTests" */;
+			buildPhases = (
+				73C451647138A3AE33D7A044 /* Sources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				E76D284896884F8F41B57429 /* PBXTargetDependency */,
+			);
+			name = NowStationTests;
+			packageProductDependencies = (
+			);
+			productName = NowStationTests;
+			productReference = F7B440CAB7049A0ABF78A1A3 /* NowStationTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
+		9243237C04C73A8852FD38F6 /* NowStationUITests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 13D74B1F07DEF8DE161C3692 /* Build configuration list for PBXNativeTarget "NowStationUITests" */;
+			buildPhases = (
+				2FCF76B0C721114D1BE5D1FB /* Sources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				1B76864914504CB1EF53972D /* PBXTargetDependency */,
+			);
+			name = NowStationUITests;
+			packageProductDependencies = (
+			);
+			productName = NowStationUITests;
+			productReference = D99314D39BEFD80984F67B90 /* NowStationUITests.xctest */;
+			productType = "com.apple.product-type.bundle.ui-testing";
+		};
+		A2AE6ADD85600EC8625F0AC9 /* NowStation */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 35A28D3F9A837BEE1C26DC09 /* Build configuration list for PBXNativeTarget "NowStation" */;
+			buildPhases = (
+				57141EF6AC24E610DD8FDBB5 /* Sources */,
+				A83D2CB16FB0F6E96E68FA83 /* Resources */,
+				E3608B36B14AF707EBD72E46 /* Embed Foundation Extensions */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				DF8A3E78D32A321090BBB0A5 /* PBXTargetDependency */,
+			);
+			name = NowStation;
+			packageProductDependencies = (
+			);
+			productName = NowStation;
+			productReference = D49BBB646C4E1993E3667400 /* NowStation.app */;
+			productType = "com.apple.product-type.application";
+		};
+		C67385F29EDB90AE642712FA /* NowStationWidget */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 1611DBAB4DB95AB9CA86910C /* Build configuration list for PBXNativeTarget "NowStationWidget" */;
+			buildPhases = (
+				AB20C13A0BF4B8237BF7F5B7 /* Sources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = NowStationWidget;
+			packageProductDependencies = (
+			);
+			productName = NowStationWidget;
+			productReference = 64120F34564FC4E30F1BBAE1 /* NowStationWidget.appex */;
+			productType = "com.apple.product-type.app-extension";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		22C81AF681EF95D1C4B47A14 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = YES;
+				LastUpgradeCheck = 1600;
+				TargetAttributes = {
+					7A5907E99E9840B049F8B603 = {
+						DevelopmentTeam = ZCAU623N43;
+						ProvisioningStyle = Automatic;
+					};
+					9243237C04C73A8852FD38F6 = {
+						DevelopmentTeam = ZCAU623N43;
+						ProvisioningStyle = Automatic;
+						TestTargetID = A2AE6ADD85600EC8625F0AC9;
+					};
+					A2AE6ADD85600EC8625F0AC9 = {
+						DevelopmentTeam = ZCAU623N43;
+						ProvisioningStyle = Automatic;
+					};
+					C67385F29EDB90AE642712FA = {
+						DevelopmentTeam = ZCAU623N43;
+						ProvisioningStyle = Automatic;
+					};
+				};
+			};
+			buildConfigurationList = F8692C9DF899096B84F8904A /* Build configuration list for PBXProject "NowStation" */;
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				Base,
+				en,
+			);
+			mainGroup = 589C8144041CB878A108B95E;
+			minimizedProjectReferenceProxies = 1;
+			preferredProjectObjectVersion = 77;
+			productRefGroup = 0E346822CCE09A8C6A7AD743 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				A2AE6ADD85600EC8625F0AC9 /* NowStation */,
+				C67385F29EDB90AE642712FA /* NowStationWidget */,
+				7A5907E99E9840B049F8B603 /* NowStationTests */,
+				9243237C04C73A8852FD38F6 /* NowStationUITests */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		A83D2CB16FB0F6E96E68FA83 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				2351249B090F191B470D1422 /* Assets.xcassets in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		2FCF76B0C721114D1BE5D1FB /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				01C800F87B4FC7AE3EC29D5F /* RideFlowUITests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		57141EF6AC24E610DD8FDBB5 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				59A56111CC75F82ECE15F786 /* APIClient.swift in Sources */,
+				26FA5FC3E33337A703797AED /* HomeView.swift in Sources */,
+				3732F0A0149221BACDC0AA95 /* HomeViewModel.swift in Sources */,
+				98FB7A527A5A98C798A17F80 /* MotionDetector.swift in Sources */,
+				A319DF87BEAF67C5881E529E /* NowStationApp.swift in Sources */,
+				59824F54E6E27594305160A7 /* Ride.swift in Sources */,
+				BBA96EC713273DDAE871DFDE /* RideActivityAttributes.swift in Sources */,
+				351F225899C575DD3AC65EBA /* RideRunner.swift in Sources */,
+				64A3330F07C678FD5AE62CF2 /* RideScreen.swift in Sources */,
+				B63ECBBFE01C8AEC6C59E0BC /* RideTexts.swift in Sources */,
+				0E340B4DC7021DA62D97773F /* RideTracker.swift in Sources */,
+				BF0DF56B08551030B15D21E3 /* Station.swift in Sources */,
+				296B093FA6AA8BA80D74F663 /* StationSearchView.swift in Sources */,
+				E9862B45F7C8E049568BA4F6 /* Theme.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		73C451647138A3AE33D7A044 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				51ACCA91E345BA53CF8C58CC /* MotionDetectorTests.swift in Sources */,
+				040920612EB89A1ADF09706E /* RideScreenRenderTests.swift in Sources */,
+				01E51A1EBA11FA22D8F60214 /* RideTrackerTests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		AB20C13A0BF4B8237BF7F5B7 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				BF0E4BDFD90274B4D5292C12 /* RideActivityAttributes.swift in Sources */,
+				4A5398AE5FD5FC8DC31CDD2B /* RideLiveActivity.swift in Sources */,
+				85C7DB377626BE8AD25AAB7A /* Theme.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		1B76864914504CB1EF53972D /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = A2AE6ADD85600EC8625F0AC9 /* NowStation */;
+			targetProxy = 6A76410FE8E9819D85AAF3EF /* PBXContainerItemProxy */;
+		};
+		DF8A3E78D32A321090BBB0A5 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = C67385F29EDB90AE642712FA /* NowStationWidget */;
+			targetProxy = FF5F670B4F0127954F12F65A /* PBXContainerItemProxy */;
+		};
+		E76D284896884F8F41B57429 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = A2AE6ADD85600EC8625F0AC9 /* NowStation */;
+			targetProxy = B92D768EF1E1CA08F4C9E439 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin XCBuildConfiguration section */
+		10C44C88392BF4E316D6F16C /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				GENERATE_INFOPLIST_FILE = YES;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.taektoy.NowStationTests;
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/NowStation.app/NowStation";
+			};
+			name = Debug;
+		};
+		4C8B4FBA81DEB26D96E3AA7B /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				INFOPLIST_FILE = NowStation/Info.plist;
+				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.taektoy.nowstation;
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = 1;
+			};
+			name = Debug;
+		};
+		8DD0BBD5808083B8EA97A5D3 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				GENERATE_INFOPLIST_FILE = YES;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.taektoy.NowStationUITests;
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_TARGET_NAME = NowStation;
+			};
+			name = Debug;
+		};
+		91EC9B266E227A8D4A621082 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				INFOPLIST_FILE = NowStation/Info.plist;
+				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.taektoy.nowstation;
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = 1;
+			};
+			name = Release;
+		};
+		9C1C443F264E5D6D5D2B3889 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				GENERATE_INFOPLIST_FILE = YES;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.taektoy.NowStationUITests;
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_TARGET_NAME = NowStation;
+			};
+			name = Release;
+		};
+		9D28B2AB12E5CB27697C3738 /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 4669C85DCA27A45C81613DC8 /* App.xcconfig */;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_STYLE = Automatic;
+				COPY_PHASE_STRIP = NO;
+				CURRENT_PROJECT_VERSION = 1;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DEVELOPMENT_TEAM = ZCAU623N43;
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				MARKETING_VERSION = 0.1.0;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
+				SWIFT_VERSION = 5.0;
+			};
+			name = Release;
+		};
+		A51B526D25E1C428BC105A54 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 4669C85DCA27A45C81613DC8 /* App.xcconfig */;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_STYLE = Automatic;
+				COPY_PHASE_STRIP = NO;
+				CURRENT_PROJECT_VERSION = 1;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				DEVELOPMENT_TEAM = ZCAU623N43;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"$(inherited)",
+					"DEBUG=1",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				MARKETING_VERSION = 0.1.0;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5.0;
+			};
+			name = Debug;
+		};
+		B0E55594954EF8B054A02361 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				INFOPLIST_FILE = NowStationWidget/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.taektoy.nowstation.widget;
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = 1;
+			};
+			name = Release;
+		};
+		BB5D031095CF5549336D1A32 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				INFOPLIST_FILE = NowStationWidget/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.taektoy.nowstation.widget;
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = 1;
+			};
+			name = Debug;
+		};
+		FD165BEAA5202A0E2D3D8AAA /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				GENERATE_INFOPLIST_FILE = YES;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.taektoy.NowStationTests;
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/NowStation.app/NowStation";
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		13D74B1F07DEF8DE161C3692 /* Build configuration list for PBXNativeTarget "NowStationUITests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				8DD0BBD5808083B8EA97A5D3 /* Debug */,
+				9C1C443F264E5D6D5D2B3889 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		1611DBAB4DB95AB9CA86910C /* Build configuration list for PBXNativeTarget "NowStationWidget" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				BB5D031095CF5549336D1A32 /* Debug */,
+				B0E55594954EF8B054A02361 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		35A28D3F9A837BEE1C26DC09 /* Build configuration list for PBXNativeTarget "NowStation" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				4C8B4FBA81DEB26D96E3AA7B /* Debug */,
+				91EC9B266E227A8D4A621082 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		4B2145AFED6F5270F88A9EBF /* Build configuration list for PBXNativeTarget "NowStationTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				10C44C88392BF4E316D6F16C /* Debug */,
+				FD165BEAA5202A0E2D3D8AAA /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		F8692C9DF899096B84F8904A /* Build configuration list for PBXProject "NowStation" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				A51B526D25E1C428BC105A54 /* Debug */,
+				9D28B2AB12E5CB27697C3738 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 22C81AF681EF95D1C4B47A14 /* Project object */;
+}

@@ -1,0 +1,95 @@
+name: NowStation
+options:
+  bundleIdPrefix: com.taektoy
+  deploymentTarget:
+    iOS: "17.0"
+  createIntermediateGroups: true
+settings:
+  base:
+    DEVELOPMENT_TEAM: ZCAU623N43
+    CODE_SIGN_STYLE: Automatic
+    SWIFT_VERSION: "5.0"
+    MARKETING_VERSION: "0.1.0"
+    CURRENT_PROJECT_VERSION: "1"
+
+configFiles:
+  Debug: Config/App.xcconfig
+  Release: Config/App.xcconfig
+targets:
+  NowStation:
+    type: application
+    platform: iOS
+    sources:
+      - NowStation
+      - Shared
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.taektoy.nowstation
+        TARGETED_DEVICE_FAMILY: "1"
+        ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
+        INFOPLIST_KEY_UILaunchScreen_Generation: YES
+    info:
+      path: NowStation/Info.plist
+      properties:
+        CFBundleDisplayName: 지금역
+        CFBundleShortVersionString: $(MARKETING_VERSION)
+        CFBundleVersion: $(CURRENT_PROJECT_VERSION)
+        UILaunchScreen: {}
+        UISupportedInterfaceOrientations: [UIInterfaceOrientationPortrait]
+        APIBaseURL: $(API_BASE_URL)
+        NSAppTransportSecurity:
+          NSAllowsLocalNetworking: true
+        # 탑승 중 앱이 잠들지 않게 위치 갱신을 켜 둔다(지하라 위치 값은 쓰지 않는다). APNs 없이 혼자 쓰는 빌드라서
+        UIBackgroundModes: [location]
+        NSLocationWhenInUseUsageDescription: 화면을 꺼도 탑승을 계속 따라가려면 필요해요. 위치 값은 쓰지 않아요.
+        NSMotionUsageDescription: 열차가 출발하고 멈추는 순간을 폰 움직임으로 알아내요.
+        NSSupportsLiveActivities: true
+    dependencies:
+      - target: NowStationWidget
+  NowStationWidget:
+    type: app-extension
+    platform: iOS
+    sources:
+      - NowStationWidget
+      - Shared
+      - path: NowStation/Core/Theme.swift
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.taektoy.nowstation.widget
+        TARGETED_DEVICE_FAMILY: "1"
+    info:
+      path: NowStationWidget/Info.plist
+      properties:
+        CFBundleDisplayName: 지금역
+        CFBundleShortVersionString: $(MARKETING_VERSION)
+        CFBundleVersion: $(CURRENT_PROJECT_VERSION)
+        NSExtension:
+          NSExtensionPointIdentifier: com.apple.widgetkit-extension
+  NowStationTests:
+    type: bundle.unit-test
+    platform: iOS
+    sources: [NowStationTests]
+    dependencies:
+      - target: NowStation
+    settings:
+      base:
+        GENERATE_INFOPLIST_FILE: YES
+  NowStationUITests:
+    type: bundle.ui-testing
+    platform: iOS
+    sources: [NowStationUITests]
+    dependencies:
+      - target: NowStation
+    settings:
+      base:
+        GENERATE_INFOPLIST_FILE: YES
+        TEST_TARGET_NAME: NowStation
+schemes:
+  NowStation:
+    build:
+      targets:
+        NowStation: all
+        NowStationTests: [test]
+        NowStationUITests: [test]
+    test:
+      targets: [NowStationTests, NowStationUITests]
