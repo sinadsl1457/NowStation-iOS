@@ -1,7 +1,7 @@
 import Foundation
 import Observation
 
-/** 지금 고르는 칸: 출발역(필수) 또는 내릴 역(선택). */
+/** 지금 고르는 칸: 타는 역 또는 내릴 역(둘 다 골라야 시작). */
 enum PickTarget { case origin, destination }
 
 /** 홈: 역을 검색해 출발역(과 내릴 역)을 고르고 탑승을 시작한다. Android HomeViewModel과 같은 흐름. */
@@ -22,7 +22,8 @@ final class HomeViewModel {
 
     /** 같은 역을 두 칸에 고름(바꾸기·다시 고르다 생김). 시작하지 않고 카드에 알린다. */
     var sameStation: Bool { origin != nil && origin?.name == destination?.name }
-    var canStart: Bool { origin != nil && !isStarting && !sameStation }
+    /** 내릴 역도 필수(사용자 결정: 내릴 역 알림이 이 앱의 목적). */
+    var canStart: Bool { origin != nil && destination != nil && !isStarting && !sameStation }
     var canSwap: Bool { (origin != nil || destination != nil) && !isStarting }
 
     @ObservationIgnored private let stations: StationRepository
@@ -84,7 +85,8 @@ final class HomeViewModel {
         guard !isStarting else { return }
         origin = route.origin
         destination = route.destination
-        await start()
+        // 내릴 역이 선택이던 때 저장된 경로: 내릴 역부터 고르게 한다
+        if route.destination == nil { edit(.destination) } else { await start() }
     }
 
     func start() async {

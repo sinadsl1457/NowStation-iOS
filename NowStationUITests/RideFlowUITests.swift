@@ -18,6 +18,11 @@ final class RideFlowUITests: XCTestCase {
         XCTAssertTrue(app.buttons["가천대"].waitForExistence(timeout: 10) || app.staticTexts["가천대"].waitForExistence(timeout: 1))
         snap(app, "2-검색")
         app.staticTexts["가천대"].firstMatch.tap()
+        XCTAssertFalse(app.buttons["탑승 시작"].isEnabled, "내릴 역도 골라야 시작")
+        app.staticTexts["고르기"].firstMatch.tap()
+        XCTAssertTrue(app.staticTexts["내릴 역"].waitForExistence(timeout: 5))
+        XCTAssertTrue(app.staticTexts["강남"].waitForExistence(timeout: 10))
+        app.staticTexts["강남"].firstMatch.tap()
 
         let start = app.buttons["탑승 시작"]
         XCTAssertTrue(start.waitForExistence(timeout: 5))

@@ -49,7 +49,7 @@ private struct Header: View {
                     Text("지금역").font(.system(size: 30, weight: .black)).foregroundStyle(.white)
                     Text("v\(version)").font(.caption.weight(.medium)).foregroundStyle(.white.opacity(0.7))
                 }
-                Text("타는 역만 고르면, 탄 열차를 찾아\n잠금화면에 현재역을 보여 줘요")
+                Text("타는 역과 내릴 역을 고르면, 탄 열차를 찾아\n잠금화면에 현재역을 보여 줘요")
                     .font(.system(size: 16)).foregroundStyle(.white.opacity(0.88))
                     .padding(.top, 6)
                 TrackDecoration().frame(width: 250, height: 24).padding(.top, 22)
@@ -100,7 +100,7 @@ struct HomeRouteCard: View {
                         Rectangle().fill(Color(hex: 0xB8C3D9)).frame(width: 2, height: 14).padding(.horizontal, 5)
                         Rectangle().fill(Color(hex: 0xEEF1F6)).frame(height: 1)
                     }
-                    StationField(label: "내릴 역 (선택)", station: vm.destination, filled: false) { vm.edit(.destination) }
+                    StationField(label: "내릴 역", station: vm.destination, filled: false) { vm.edit(.destination) }
                 }
                 // 타는 역 ↔ 내릴 역(퇴근길)
                 Button { withAnimation(.easeOut(duration: 0.2)) { vm.swap() } } label: {
@@ -212,7 +212,7 @@ private struct HowItWorks: View {
         VStack(alignment: .leading, spacing: 10) {
             SectionTitle(text: "이렇게 써요")
             VStack(alignment: .leading, spacing: 14) {
-                step(1, "타는 역을 고르고 탑승 시작")
+                step(1, "타는 역과 내릴 역을 고르고 탑승 시작")
                 step(2, "열차에 타면 폰 움직임으로 탄 열차를 찾아요")
                 step(3, "잠금화면에 현재역, 내리기 전엔 진동")
             }

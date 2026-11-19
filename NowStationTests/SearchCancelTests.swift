@@ -73,7 +73,7 @@ final class SwapTests: XCTestCase {
         v.swap()
         XCTAssertEqual(v.origin?.name, "강남")
         XCTAssertNil(v.destination)
-        XCTAssertTrue(v.canStart)
+        XCTAssertFalse(v.canStart, "내릴 역도 골라야 시작")
     }
 }
 
@@ -89,5 +89,29 @@ final class SameStationTests: XCTestCase {
         XCTAssertFalse(v.canStart)
         await v.start()
         XCTAssertNil(tracker.state)
+    }
+}
+
+@MainActor
+final class RequiredDestinationTests: XCTestCase {
+    func test_내릴_역을_고르지_않으면_시작할_수_없다() async {
+        let tracker = RideTracker(repository: FakeRideRepository())
+        let v = HomeViewModel(stations: LineChipRenderTests.NoStations(), tracker: tracker, recentStore: MemoryRecentStore())
+        v.origin = Station(name: "태평", lines: ["수인분당선"])
+        XCTAssertFalse(v.canStart)
+        await v.start()
+        XCTAssertNil(tracker.state)
+    }
+
+    func test_내릴_역_없이_저장된_옛_최근_경로는_내릴_역_고르기를_연다() async {
+        let tracker = RideTracker(repository: FakeRideRepository())
+        let store = MemoryRecentStore()
+        store.routes = [RecentRoute(origin: Station(name: "태평", lines: []), destination: nil)]
+        let v = HomeViewModel(stations: LineChipRenderTests.NoStations(), tracker: tracker, recentStore: store)
+        await v.startRecent(v.recent[0])
+        XCTAssertNil(tracker.state)
+        XCTAssertEqual(v.origin?.name, "태평")
+        XCTAssertTrue(v.searching)
+        XCTAssertEqual(v.target, .destination)
     }
 }
