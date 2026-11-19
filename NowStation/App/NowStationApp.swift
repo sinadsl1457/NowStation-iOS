@@ -1,3 +1,4 @@
+import ActivityKit
 import SwiftUI
 import UserNotifications
 
@@ -58,6 +59,21 @@ final class AppDelegate: NSObject, UIApplicationDelegate, UNUserNotificationCent
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]? = nil) -> Bool {
         UNUserNotificationCenter.current().delegate = self
         return true
+    }
+
+    /**
+     * 탑승 중(백그라운드에서 도는 중)에 밀어 닫으면 운영체제가 끝내기 직전에 한 번 부른다.
+     * 다이나믹 아일랜드 표시는 앱이 죽어도 남아서(실기기) 여기서 끈다. 곧 죽으므로 끝날 때까지 잠깐(최대 2초) 기다린다.
+     */
+    func applicationWillTerminate(_ application: UIApplication) {
+        let done = DispatchSemaphore(value: 0)
+        Task.detached {
+            for a in Activity<RideActivityAttributes>.activities {
+                await a.end(nil, dismissalPolicy: .immediate)
+            }
+            done.signal()
+        }
+        _ = done.wait(timeout: .now() + 2)
     }
 
     func userNotificationCenter(_ center: UNUserNotificationCenter, willPresent notification: UNNotification) async -> UNNotificationPresentationOptions {
