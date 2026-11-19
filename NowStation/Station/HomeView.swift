@@ -195,8 +195,9 @@ private struct RecentRoutes: View {
                             }
                         }
                         Spacer()
-                        // 누르면 위 칸에 채운다(바로 시작하지 않음)
-                        Image(systemName: "chevron.right").font(.system(size: 14, weight: .semibold)).foregroundStyle(Color.muted)
+                        // 누르면 위 칸에 채운다(바로 시작하지 않음). ↖ = 검색 추천어처럼 "입력칸에 넣기"(›는 다음 화면으로 보여서 뺐다)
+                        Image(systemName: "arrow.up.left").font(.system(size: 15, weight: .semibold)).foregroundStyle(Color.muted)
+                            .accessibilityLabel("칸에 채우기")
                     }
                     .padding(.horizontal, 16).padding(.vertical, 14)
                     .background(.white, in: RoundedRectangle(cornerRadius: 16))
