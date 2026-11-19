@@ -178,7 +178,7 @@ private struct RecentRoutes: View {
             SectionTitle(text: "최근 경로")
             ForEach(Array(vm.recent.enumerated()), id: \.offset) { _, route in
                 Button {
-                    Task { await vm.startRecent(route) }
+                    withAnimation(.easeOut(duration: 0.2)) { vm.useRecent(route) }
                 } label: {
                     HStack(spacing: 12) {
                         Image(systemName: "clock").foregroundStyle(Color.brand)
@@ -195,7 +195,8 @@ private struct RecentRoutes: View {
                             }
                         }
                         Spacer()
-                        Text("바로 시작").font(.system(size: 14, weight: .bold)).foregroundStyle(Color.brand)
+                        // 누르면 위 칸에 채운다(바로 시작하지 않음)
+                        Image(systemName: "chevron.right").font(.system(size: 14, weight: .semibold)).foregroundStyle(Color.muted)
                     }
                     .padding(.horizontal, 16).padding(.vertical, 14)
                     .background(.white, in: RoundedRectangle(cornerRadius: 16))

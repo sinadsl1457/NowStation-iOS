@@ -81,12 +81,14 @@ final class HomeViewModel {
     /** 타는 역과 내릴 역을 바꾼다(태평 → 강남으로 출근했으면 퇴근길은 강남 → 태평). */
     func swap() { (origin, destination) = (destination, origin) }
 
-    func startRecent(_ route: RecentRoute) async {
+    /**
+     * 최근 경로를 누르면 칸에 채우기만 한다. 시작은 사용자가 누른다(사용자 피드백: 바로 출발하면 예상과 다르고,
+     * 귀갓길은 채운 뒤 바꾸기를 누르는 게 자연스럽다).
+     */
+    func useRecent(_ route: RecentRoute) {
         guard !isStarting else { return }
         origin = route.origin
         destination = route.destination
-        // 내릴 역이 선택이던 때 저장된 경로: 내릴 역부터 고르게 한다
-        if route.destination == nil { edit(.destination) } else { await start() }
     }
 
     func start() async {
