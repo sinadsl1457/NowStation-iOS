@@ -308,6 +308,10 @@ private struct AlightContent: View {
             if let next = v.nextStation {
                 Text("다음 역 \(next)").font(.system(size: 15)).opacity(0.7).padding(.top, 20)
             }
+            if !ride.online {
+                // 연결이 끊기면 보이는 역이 오래된 것일 수 있다(갈아탈·내릴 준비 화면에서도)
+                Label("연결 끊김(다시 시도 중)", systemImage: "wifi.slash").font(.system(size: 14, weight: .semibold)).padding(.top, 10)
+            }
             Spacer()
             Button(action: onEnd) {
                 Text("탑승 끝내기").font(.system(size: 17, weight: .bold)).foregroundStyle(Color.brand)
