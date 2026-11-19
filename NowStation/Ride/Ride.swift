@@ -96,6 +96,9 @@ struct TrainStrip: Equatable, Decodable {
     var stations: [String]
     var boardIndex: Int
     var trains: [StripTrain]
+    /** 정거장 하나 평균 초(정차 포함)와 정차 초: 받은 위치 사이 움직임을 이어 그리는 기준. */
+    var secondsPerStop: Int?
+    var dwellSeconds: Int?
 }
 
 struct StripTrain: Equatable, Decodable, Identifiable {
@@ -106,6 +109,12 @@ struct StripTrain: Equatable, Decodable, Identifiable {
     var terminal: String?
     var selected: Bool
     var seenSecondsAgo: Int
+    /** 전광판 말투: "[2]번째 전역 (야탑)", "전역 도착 (모란)", "태평 진입". */
+    var message: String?
+    /** 타는 역까지 대략 몇 분(0: 지금 타는 역, nil: 지나감). */
+    var etaMinutes: Int?
+    /** 이 역에 온 지 몇 초. */
+    var atStationSeconds: Int?
     var id: String { trainNo }
 }
 

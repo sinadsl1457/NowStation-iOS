@@ -34,8 +34,8 @@ final class RideFlowUITests: XCTestCase {
         let banner = app.descendants(matching: .any).matching(identifier: "ride-banner").firstMatch
         XCTAssertTrue(banner.waitForExistence(timeout: 15))
         banner.tap() // 권한 창이 떠 있으면 위 모니터가 처리(노선도의 열차를 누르지 않게 안내 띠를 누른다)
-        XCTAssertTrue(app.staticTexts["한티 ▶ 선릉"].exists, "경로 구간: 수인분당선으로 선릉까지")
-        XCTAssertTrue(app.staticTexts["선릉 ▶ 강남"].exists, "선릉에서 2호선으로 강남")
+        XCTAssertTrue(app.staticTexts["한티 → 강남"].exists, "전체 경로 막대(한티 → 선릉 환승 → 강남)")
+        XCTAssertTrue(app.staticTexts["다음 열차"].exists, "타는 역으로 들어오는 다음 열차 카드")
         let trains = app.buttons.matching(NSPredicate(format: "identifier BEGINSWITH 'train-'"))
         XCTAssertTrue(trains.firstMatch.waitForExistence(timeout: 15), "노선도에 열차가 보여야 한다")
         XCTAssertTrue((banner.label as String).contains("따라가고 있어요"), "시작하자마자 다음 열차를 골라 따라간다: \(banner.label)")

@@ -66,6 +66,12 @@ enum RideTexts {
         }
     }
 
+    /** 타는 역까지 "약 N분", 타는 역에 있으면 "지금 타세요". 역간 평균 시간으로 센 추정이라 "약". Android와 같은 문구. */
+    static func eta(_ t: StripTrain) -> String {
+        guard let m = t.etaMinutes else { return "지나감" }
+        return m == 0 ? "지금 타세요" : "약 \(m)분"
+    }
+
     /** 노선도 위 열차 이름표: "왕십리행". */
     static func terminal(_ t: StripTrain) -> String { t.terminal.map { "\($0)행" } ?? "" }
 

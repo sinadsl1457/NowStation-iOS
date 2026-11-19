@@ -185,8 +185,10 @@ private struct RouteBar: View {
 }
 
 /**
- * 가로 노선도(이번정거장 4708과 같은 배치): 역이 한 줄로 늘어서고 그 위에 열차. 골라 둔 열차는 칠하고, 다른 열차를 누르면 그 열차로.
- * 공공 데이터가 늦어 15초마다 다시 받는다.
+ * 세로 "다가오는 열차"(사용자가 시안 B로 정함, Android StripCard와 같은 배치): 타기 전에는 타는 역 위로 들어오는 역들을 세로로 놓고
+ * 열차 점이 아래(타는 역)로 내려온다. 누르는 곳은 점이 아니라 열차마다 한 줄(높이 60 이상, 도착 순서로 고정).
+ * 공공 데이터는 역에 들어설 때만 바뀌어, 그 사이는 역간 평균 시간으로 점을 이어 움직인다(다음 역 직전에서 멈춰 데이터를 기다림).
+ * 서버에는 5초마다 묻는다(서버가 받아 둔 값이라 서울시 API 한도와 무관).
  */
 private struct StripCard: View {
     let ride: ActiveRide
@@ -194,100 +196,167 @@ private struct StripCard: View {
     let onPick: (StripTrain, String) async throws -> Void
 
     @State private var strip: TrainStrip?
+    @State private var receivedAt = Date()
     @State private var picking: String?
     @State private var failed = false
 
-    private static let cell: CGFloat = 76
-
     var body: some View {
-        VStack(alignment: .leading, spacing: 10) {
+        Group {
             if let strip {
-                HStack {
-                    Text("\(strip.leg.from) → \(strip.leg.to) 방향 열차").font(.system(size: 14, weight: .bold))
-                    Spacer()
-                    Text(strip.trains.map(\.seenSecondsAgo).min().map { "\($0)초 전 기준" } ?? "")
-                        .font(.caption).foregroundStyle(Color.muted)
-                }
-                if strip.boardIndex > 0 {
-                    Text("회색 역: 열차가 \(strip.leg.from)(으)로 들어오는 쪽").font(.caption2).foregroundStyle(Color.muted)
-                }
-                ScrollViewReader { proxy in
-                    ScrollView(.horizontal, showsIndicators: false) {
-                        HStack(alignment: .bottom, spacing: 0) {
-                            ForEach(Array(strip.stations.enumerated()), id: \.offset) { i, name in
-                                column(strip, index: i, name: name).id(i)
-                            }
-                        }
-                        .padding(.horizontal, 8)
-                    }
-                    .onAppear { proxy.scrollTo(focus(strip), anchor: .center) }
+                TimelineView(.periodic(from: .now, by: 0.1)) { ctx in
+                    board(strip, now: ctx.date)
                 }
             } else {
-                Text(failed ? "열차 정보를 받지 못했어요. 잠시 후 다시 받아 와요." : "노선도를 받아 오는 중…")
+                Text(failed ? "열차 정보를 받지 못했어요. 잠시 후 다시 받아 와요." : "열차를 받아 오는 중…")
                     .font(.system(size: 14)).foregroundStyle(Color.muted).frame(maxWidth: .infinity, minHeight: 80)
+                    .background(.white, in: RoundedRectangle(cornerRadius: 22))
             }
         }
-        .padding(16)
-        .background(.white, in: RoundedRectangle(cornerRadius: 24))
         .task {
             while !Task.isCancelled {
-                do { strip = try await load(); failed = false } catch is CancellationError { return } catch { failed = true }
-                try? await Task.sleep(nanoseconds: 15_000_000_000)
+                do { strip = try await load(); receivedAt = Date(); failed = false } catch is CancellationError { return } catch { failed = true }
+                try? await Task.sleep(nanoseconds: 5_000_000_000)
             }
         }
     }
 
-    /** 골라 둔 열차, 없으면 타는 역을 가운데로. */
-    private func focus(_ strip: TrainStrip) -> Int {
-        strip.trains.first(where: \.selected).flatMap { t in strip.stations.firstIndex(of: t.station) } ?? strip.boardIndex
-    }
+    @ViewBuilder private func board(_ strip: TrainStrip, now: Date) -> some View {
+        let c = Color.line(strip.leg.line)
+        let selected = strip.trains.first(where: \.selected)
+        let selIdx = selected.flatMap { strip.stations.firstIndex(of: $0.station) } ?? -1
+        let riding = selIdx > strip.boardIndex || (selIdx == strip.boardIndex && selected?.status == "DEPARTED")
+        let from = riding ? strip.boardIndex : 0
+        let to = riding ? strip.stations.count - 1 : min(strip.boardIndex + 1, strip.stations.count - 1)
+        let window = Array(strip.stations[from...to])
+        let gap: CGFloat = riding ? 40 : 60
+        let incoming = strip.trains
+            .filter { (strip.stations.firstIndex(of: $0.station) ?? .max) <= strip.boardIndex && $0.etaMinutes != nil }
+            .sorted { (strip.stations.firstIndex(of: $0.station) ?? 0) > (strip.stations.firstIndex(of: $1.station) ?? 0) }
+        let shown = riding ? [selected].compactMap { $0 } : incoming
 
-    @ViewBuilder private func column(_ strip: TrainStrip, index: Int, name: String) -> some View {
-        let trains = strip.trains.filter { $0.station == name }
-        VStack(spacing: 6) {
-            VStack(spacing: 6) {
-                ForEach(trains) { t in trainTag(t, line: strip.leg.line) }
-            }
-            .frame(minHeight: 74, alignment: .bottom)
-            ZStack {
-                Rectangle().fill(index >= strip.boardIndex ? Color.line(strip.leg.line) : Color(hex: 0xC9D1E0)).frame(height: 3)
-                Circle().fill(index == strip.boardIndex ? Color.line(strip.leg.line) : Color(hex: 0xC9D1E0))
-                    .frame(width: index == strip.boardIndex ? 16 : 10, height: index == strip.boardIndex ? 16 : 10)
-            }
-            .frame(height: 18)
-            Text(name).font(.system(size: 13, weight: index == strip.boardIndex ? .heavy : .regular))
-                // 타는 역 앞쪽(들어오는 열차가 오는 쪽)은 내 경로가 아니라 흐리게
-                .foregroundStyle(index == strip.boardIndex ? Color.line(strip.leg.line) : index < strip.boardIndex ? Color(hex: 0xA8B0BF) : Color.ink)
-                .lineLimit(1).minimumScaleFactor(0.7)
-        }
-        .frame(width: Self.cell)
-    }
-
-    private func trainTag(_ t: StripTrain, line: String) -> some View {
-        Button {
-            guard picking == nil, !t.selected else { return }
-            picking = t.trainNo
-            Task {
-                try? await onPick(t, line)
-                strip = try? await load()
-                picking = nil
-            }
-        } label: {
-            VStack(spacing: 2) {
-                Text(RideTexts.terminal(t)).font(.system(size: 11, weight: .semibold))
-                if let state = RideTexts.trainState(t) { Text(state).font(.system(size: 10)).opacity(0.8) }
-                if picking == t.trainNo { ProgressView().controlSize(.mini) } else {
-                    Text(t.trainNo).font(.system(size: 12, weight: .bold).monospacedDigit())
+        VStack(alignment: .leading, spacing: 12) {
+            if !riding, let first = incoming.first { nextCard(first, line: strip.leg.line) }
+            HStack(alignment: .top, spacing: 10) {
+                ZStack(alignment: .topLeading) {
+                    Rectangle().fill(c).frame(width: 4, height: CGFloat(window.count - 1) * gap).offset(x: 66, y: 14)
+                    ForEach(Array(window.enumerated()), id: \.offset) { k, name in
+                        let isBoard = from + k == strip.boardIndex
+                        let passed = riding && selIdx >= 0 && from + k < selIdx
+                        HStack(spacing: isBoard ? 3 : 6) {
+                            Text(name).font(.system(size: 13, weight: isBoard ? .black : .regular)).lineLimit(1).minimumScaleFactor(0.7)
+                                .foregroundStyle(isBoard ? Color.brand : passed ? Color(hex: 0xA8B0BF) : Color.ink)
+                                .frame(width: 56, alignment: .trailing)
+                            Circle().fill(.white).frame(width: isBoard ? 18 : 12, height: isBoard ? 18 : 12)
+                                .overlay(Circle().stroke(isBoard ? Color.brand : c, lineWidth: 3))
+                        }
+                        .frame(height: 20).offset(y: CGFloat(k) * gap + 4)
+                    }
+                    ForEach(shown) { t in
+                        if let p = position(t, strip: strip, from: from, now: now), p > -0.5, p < CGFloat(window.count) - 0.5 {
+                            HStack(spacing: 4) {
+                                RoundedRectangle(cornerRadius: 6).fill(t.selected ? c : Color(hex: 0xC9D1E0)).frame(width: 20, height: 20)
+                                    .overlay(RoundedRectangle(cornerRadius: 6).stroke(.white, lineWidth: 2))
+                                Text(t.trainNo).font(.system(size: 12, weight: .semibold).monospacedDigit()).foregroundStyle(Color(hex: 0x2A3348))
+                            }
+                            .offset(x: 58, y: p * gap + 2)
+                        }
+                    }
                 }
-                Image(systemName: "tram.fill").font(.system(size: 13))
+                .frame(width: 124, height: CGFloat(window.count) * gap + 8, alignment: .topLeading)
+
+                VStack(alignment: .leading, spacing: 8) {
+                    if riding {
+                        Text("내 열차가 아래로 내려가요").font(.system(size: 13, weight: .bold))
+                        Text("\(strip.leg.to)까지 따라가요").font(.system(size: 13)).foregroundStyle(Color.muted)
+                    } else {
+                        Text("가까운 순 · 줄을 눌러 고르기").font(.system(size: 11)).foregroundStyle(Color.muted)
+                        ForEach(incoming) { t in row(t, line: strip.leg.line) }
+                        if incoming.isEmpty { Text("지금 들어오는 열차가 없어요").font(.system(size: 13)).foregroundStyle(Color.muted) }
+                    }
+                }
             }
-            .foregroundStyle(t.selected ? Color.white : Color.ink)
-            .padding(.horizontal, 6).padding(.vertical, 5)
-            .frame(width: Self.cell - 10)
-            .background(RoundedRectangle(cornerRadius: 10).fill(t.selected ? Color.line(line) : Color.white))
-            .overlay(RoundedRectangle(cornerRadius: 10).stroke(t.selected ? Color.clear : Color(hex: 0xC9D1E0), lineWidth: 1.5))
+            .padding(.horizontal, 14).padding(.vertical, 16)
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .background(.white, in: RoundedRectangle(cornerRadius: 22))
+            if !riding {
+                Text("\(strip.leg.from)에 서지 않는 급행, \(strip.leg.to)까지 가지 않는 열차는 빼고 보여 줘요")
+                    .font(.system(size: 12)).foregroundStyle(Color.muted).padding(.horizontal, 4)
+            }
         }
+    }
+
+    /** 받은 위치 사이 움직임: 정차 시간이 지나면 다음 역 쪽으로, 다음 역 직전(0.92)에서 데이터를 기다린다. */
+    private func position(_ t: StripTrain, strip: TrainStrip, from: Int, now: Date) -> CGFloat? {
+        guard let i = strip.stations.firstIndex(of: t.station) else { return nil }
+        let dwell = Double(strip.dwellSeconds ?? 30)
+        let travel = max(Double(strip.secondsPerStop ?? 130) - dwell, 30)
+        let elapsed = Double(t.atStationSeconds ?? 0) + now.timeIntervalSince(receivedAt)
+        let p: Double
+        switch t.status {
+        case "ENTERING": p = -0.12
+        case "DEPARTED": p = min(max(elapsed / travel, 0), 0.92)
+        default: p = min(max((elapsed - dwell) / travel, 0), 0.92)
+        }
+        return CGFloat(Double(i - from) + p)
+    }
+
+    /** 열차 번호는 행선지보다 2 크게, 세미볼드(사용자 결정). */
+    private func title(_ t: StripTrain, color: Color, no: CGFloat, terminal: CGFloat) -> some View {
+        HStack(alignment: .firstTextBaseline, spacing: 5) {
+            Text(t.trainNo).font(.system(size: no, weight: .semibold).monospacedDigit())
+            Text(RideTexts.terminal(t)).font(.system(size: terminal, weight: .heavy))
+        }
+        .foregroundStyle(color)
+    }
+
+    private func pick(_ t: StripTrain, line: String) {
+        guard picking == nil, !t.selected else { return }
+        picking = t.trainNo
+        Task {
+            try? await onPick(t, line)
+            if let s = try? await load() { strip = s; receivedAt = Date() }
+            picking = nil
+        }
+    }
+
+    private func row(_ t: StripTrain, line: String) -> some View {
+        let c = Color.line(line)
+        return Button { pick(t, line: line) } label: {
+            VStack(alignment: .leading, spacing: 2) {
+                title(t, color: t.selected ? .white : Color.ink, no: 17, terminal: 15)
+                Text(picking == t.trainNo ? "고르는 중…" : "\(t.message ?? t.station) · \(RideTexts.eta(t))")
+                    .font(.system(size: 13)).foregroundStyle(t.selected ? Color.white.opacity(0.85) : Color.muted)
+            }
+            .padding(.horizontal, 12).padding(.vertical, 9)
+            .frame(maxWidth: .infinity, minHeight: 60, alignment: .leading)
+            .background(t.selected ? c : .white, in: RoundedRectangle(cornerRadius: 14))
+            .overlay(RoundedRectangle(cornerRadius: 14).stroke(t.selected ? c : Color(hex: 0xE3E8F2), lineWidth: 2))
+        }
+        .buttonStyle(.plain)
         .accessibilityIdentifier("train-\(t.trainNo)")
+    }
+
+    /** 맨 위 "다음 열차": 이것 하나만 봐도 무엇을 탈지 안다. */
+    private func nextCard(_ t: StripTrain, line: String) -> some View {
+        let on = t.selected
+        return Button { pick(t, line: line) } label: {
+            HStack {
+                VStack(alignment: .leading, spacing: 2) {
+                    Text("다음 열차").font(.system(size: 12, weight: .bold)).opacity(0.85)
+                    title(t, color: on ? .white : Color.ink, no: 24, terminal: 20)
+                    Text("\(t.message ?? t.station) · \(RideTexts.eta(t))").font(.system(size: 15))
+                }
+                Spacer()
+                Text(on ? "선택됨" : "이 열차 탈게요").font(.system(size: 14, weight: .bold))
+                    .foregroundStyle(on ? Color.brand : .white)
+                    .padding(.horizontal, 14).padding(.vertical, 10)
+                    .background(on ? Color.white : Color.brand, in: RoundedRectangle(cornerRadius: 12))
+            }
+            .foregroundStyle(on ? .white : Color.ink)
+            .padding(.horizontal, 18).padding(.vertical, 16)
+            .background(on ? Color.brand : .white, in: RoundedRectangle(cornerRadius: 20))
+        }
+        .buttonStyle(.plain)
     }
 }
 
