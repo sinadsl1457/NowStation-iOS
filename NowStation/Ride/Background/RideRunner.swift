@@ -108,7 +108,7 @@ final class RideRunner: NSObject {
             // 판단 규칙은 중력 포함 가속도를 받는다(Android와 같은 입력)
             let a = (x: data.gravity.x + data.userAcceleration.x, y: data.gravity.y + data.userAcceleration.y, z: data.gravity.z + data.userAcceleration.z)
             let r = data.rotationRate
-            let sample = AccelSample(at: at, x: a.x * g, y: a.y * g, z: a.z * g, rotation: (r.x * r.x + r.y * r.y + r.z * r.z).squareRoot())
+            let sample = AccelSample(at: at, x: a.x * g, y: a.y * g, z: a.z * g, gyro: Vec(x: r.x, y: r.y, z: r.z))
             guard let event = detector.accept(sample) else { return }
             Task { @MainActor [weak self] in await self?.tracker.report(event) }
         }

@@ -27,6 +27,8 @@ struct MotionRules {
     var handlingRotation = 0.25
     /** 열차 가속·감속은 길어야 20~30초. 같은 힘이 이보다 오래 이어지면 가속이 아니라 기울어진 것(천천히 기울인 경우). */
     var maxPushSeconds = 40.0
+    /** 자이로가 이보다 느리게 돈다고 하면 무시한다(rad/s, 약 1.1°/s). 가만히 있어도 나오는 센서 오차가 쌓이면 기울기가 틀어진다. */
+    var gyroDeadband = 0.02
 }
 
 /** 가속도 센서 값 하나(중력 포함, m/s²). */
@@ -35,8 +37,9 @@ struct AccelSample {
     var x: Double
     var y: Double
     var z: Double
-    /** 자이로가 잰 회전 빠르기(rad/s). 사람이 폰을 만지는지 가리는 데만 쓴다. */
-    var rotation: Double = 0
+    /** 자이로(rad/s, 폰 기준 x·y·z축 회전). 기울기를 따라가고, 사람이 폰을 만지는지 가린다. */
+    var gyro = Vec.zero
+    var rotation: Double { gyro.length }
 }
 
 /**
@@ -72,16 +75,20 @@ final class MotionDetector {
         let raw = Vec(x: sample.x, y: sample.y, z: sample.z)
         let prev = last
         last = sample.at
-        guard let g = gravity, let prev else {
-            reset(raw, at: sample.at)
-            return nil
-        }
-        if raw.angleDegrees(g) > rules.reorientDegrees {
+        guard var g = gravity, let prev else {
             reset(raw, at: sample.at)
             return nil
         }
         let dt = sample.at.timeIntervalSince(prev)
         if dt <= 0 { return nil }
+        // 폰이 돈 만큼 중력 방향도 돌려 맞춘다(자이로). 빠르든 느리든 기울기를 "미는 힘"으로 착각하지 않게.
+        // 열차 가속은 폰을 돌리지 않으니 자이로가 거의 0이고, 그대로 밀림으로 남는다.
+        if sample.gyro.length > rules.gyroDeadband { g = g - sample.gyro.cross(g) * dt }
+        gravity = g
+        if raw.angleDegrees(g) > rules.reorientDegrees {
+            reset(raw, at: sample.at)
+            return nil
+        }
 
         let linear = raw - g
         push = blend(push, linear, dt, rules.pushSmoothingSeconds)
@@ -181,6 +188,7 @@ struct Vec {
     static func * (a: Vec, k: Double) -> Vec { Vec(x: a.x * k, y: a.y * k, z: a.z * k) }
     var length: Double { (x * x + y * y + z * z).squareRoot() }
     func dot(_ o: Vec) -> Double { x * o.x + y * o.y + z * o.z }
+    func cross(_ o: Vec) -> Vec { Vec(x: y * o.z - z * o.y, y: z * o.x - x * o.z, z: x * o.y - y * o.x) }
     func cosine(_ o: Vec) -> Double {
         let l = length * o.length
         return l == 0 ? 0 : dot(o) / l

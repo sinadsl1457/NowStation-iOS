@@ -102,16 +102,16 @@ final class TiltTests: XCTestCase {
         XCTAssertTrue(events.isEmpty, "가만히 있는데 \(events)")
     }
 
-    func test_흔들림_없이_살살_돌려_내려놓아도_회전으로_알아채_출발이_아니다() {
+    func test_흔들림_없이_살살_돌려_내려놓아도_자이로로_따라가_출발이_아니다() {
         let t0 = Date(timeIntervalSince1970: 1_800_000_000)
         let d = MotionDetector()
         var events: [Motion] = []
         for i in 0..<(90 * 20) {
             let s = Double(i) * 0.05
             let deg = s < 10 ? 0 : s < 11 ? (s - 10) * 10 : 10.0     // 1초에 10° 돌려 내려놓음(0.17 rad/s 아님: 아래 회전값)
-            let rot = (10..<11).contains(s) ? 0.6 : 0.0              // 내려놓는 1초 동안 자이로 0.6 rad/s
+            let rot = (10..<11).contains(s) ? 10 * Double.pi / 180 : 0.0 // 자이로: 실제로 돈 빠르기(1초에 10°)
             let r = deg * .pi / 180
-            if let e = d.accept(AccelSample(at: t0.addingTimeInterval(s), x: 9.8 * sin(r), y: 9.8 * cos(r), z: 0, rotation: rot)) { events.append(e) }
+            if let e = d.accept(AccelSample(at: t0.addingTimeInterval(s), x: 9.8 * sin(r), y: 9.8 * cos(r), z: 0, gyro: Vec(x: 0, y: 0, z: rot))) { events.append(e) }
         }
         XCTAssertTrue(events.isEmpty, "가만히 있는데 \(events)")
     }
@@ -129,5 +129,34 @@ final class TiltTests: XCTestCase {
         }
         XCTAssertEqual(events.last?.kind, .moving)
         XCTAssertEqual(events.last!.at.timeIntervalSince(t0.addingTimeInterval(150)), 0, accuracy: 1.5, "진짜 출발을 놓치지 않는다")
+    }
+
+    /** 실기기에서 발견(두 번째): 폰을 쥐고 집 안을 걸으며 손 각도가 천천히 바뀌자 "출발"로 판단. */
+    func test_폰을_들고_걸으며_손_각도가_천천히_바뀌어도_출발이_아니다() {
+        let t0 = Date(timeIntervalSince1970: 1_800_000_000)
+        let d = MotionDetector()
+        var events: [Motion] = []
+        let period = 20.0, amp = 12.0 // 20초마다 ±12° 천천히 오락가락(최대 초당 약 4°, 만진다고 보기엔 느림)
+        for i in 0..<(180 * 20) {
+            let s = Double(i) * 0.05
+            let deg = amp * sin(2 * .pi * s / period)
+            let rate = amp * (2 * .pi / period) * cos(2 * .pi * s / period) * .pi / 180
+            let step = 0.3 * sin(2 * .pi * 1.8 * s) // 살살 걷는 덜컹(판단을 막을 만큼 크지 않음)
+            let r = deg * .pi / 180
+            if let e = d.accept(AccelSample(at: t0.addingTimeInterval(s), x: 9.8 * sin(r), y: 9.8 * cos(r) + step, z: 0, gyro: Vec(x: 0, y: 0, z: rate))) { events.append(e) }
+        }
+        XCTAssertTrue(events.isEmpty, "들고 걷기만 했는데 \(events)")
+    }
+
+    func test_가만히_있는데_자이로가_조금씩_틀려도_10분_동안_출발이_아니다() {
+        let t0 = Date(timeIntervalSince1970: 1_800_000_000)
+        let d = MotionDetector()
+        var events: [Motion] = []
+        for i in 0..<(600 * 20) {
+            let s = Double(i) * 0.05
+            // 센서 오차: 실제로는 안 도는데 0.015 rad/s(초당 약 0.9°)씩 돈다고 나옴
+            if let e = d.accept(AccelSample(at: t0.addingTimeInterval(s), x: 0, y: 9.8, z: 0, gyro: Vec(x: 0, y: 0, z: 0.015))) { events.append(e) }
+        }
+        XCTAssertTrue(events.isEmpty, "책상 위인데 \(events)")
     }
 }
