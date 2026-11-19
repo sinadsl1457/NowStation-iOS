@@ -7,11 +7,12 @@ final class AppModel {
     let tracker: RideTracker
     let runner: RideRunner
     let home: HomeViewModel
+    let probe = SensorDriftProbe()
 
     init() {
         let api = APIClient()
         tracker = RideTracker(repository: RemoteRideRepository(api: api))
-        runner = RideRunner(tracker: tracker)
+        runner = RideRunner(tracker: tracker, probe: probe)
         home = HomeViewModel(stations: RemoteStationRepository(api: api), tracker: tracker, recentStore: DefaultsRecentRouteStore())
     }
 }
@@ -23,7 +24,7 @@ struct NowStationApp: App {
 
     var body: some Scene {
         WindowGroup {
-            RootView(tracker: model.tracker, home: model.home)
+            RootView(tracker: model.tracker, home: model.home, probe: model.probe)
                 .onAppear { model.runner.requestPermissions() }
         }
     }
@@ -32,11 +33,12 @@ struct NowStationApp: App {
 struct RootView: View {
     let tracker: RideTracker
     let home: HomeViewModel
+    var probe: SensorDriftProbe?
 
     var body: some View {
         Group {
             if let ride = tracker.state {
-                RideScreen(ride: ride) { Task { await tracker.end() } }
+                RideScreen(ride: ride, probe: probe) { Task { await tracker.end() } }
             } else {
                 HomeView(vm: home)
             }

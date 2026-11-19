@@ -15,6 +15,7 @@ import UserNotifications
 @MainActor
 final class RideRunner: NSObject {
     private let tracker: RideTracker
+    private let probe: SensorDriftProbe
     private let location = CLLocationManager()
     private var backgroundSession: CLBackgroundActivitySession?
     private let motion = CMMotionManager()
@@ -26,8 +27,9 @@ final class RideRunner: NSObject {
     private static let refreshSeconds: UInt64 = 5
     private static let gravity = 9.80665
 
-    init(tracker: RideTracker) {
+    init(tracker: RideTracker, probe: SensorDriftProbe) {
         self.tracker = tracker
+        self.probe = probe
         super.init()
         motionQueue.maxConcurrentOperationCount = 1
         location.delegate = self
@@ -53,6 +55,7 @@ final class RideRunner: NSObject {
     }
 
     private func begin(_ ride: ActiveRide) {
+        probe.begin()
         keepAwake()
         startMotion()
         refreshTask?.cancel()
@@ -66,6 +69,7 @@ final class RideRunner: NSObject {
     }
 
     private func finish() {
+        probe.end()
         refreshTask?.cancel()
         refreshTask = nil
         motion.stopAccelerometerUpdates()

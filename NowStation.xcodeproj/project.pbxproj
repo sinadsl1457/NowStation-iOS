@@ -35,6 +35,7 @@
 		C652BC496CDBE34973DA864C /* LineChipRenderTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 020B872E18A33A5093B6E981 /* LineChipRenderTests.swift */; };
 		C9897F70007AA6802301C654 /* SensorClock.swift in Sources */ = {isa = PBXBuildFile; fileRef = A26C6E3F32AA069FCA578C0D /* SensorClock.swift */; };
 		E9862B45F7C8E049568BA4F6 /* Theme.swift in Sources */ = {isa = PBXBuildFile; fileRef = 663147FC2C46F6AE0755F1E1 /* Theme.swift */; };
+		F7B9B87AC8A5C01E76FD45A1 /* SensorDriftProbe.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0393F0E45879E39B614578D3 /* SensorDriftProbe.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -78,6 +79,7 @@
 /* Begin PBXFileReference section */
 		001ABF49647143E62532774F /* RideActivityAttributes.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RideActivityAttributes.swift; sourceTree = "<group>"; };
 		020B872E18A33A5093B6E981 /* LineChipRenderTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LineChipRenderTests.swift; sourceTree = "<group>"; };
+		0393F0E45879E39B614578D3 /* SensorDriftProbe.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SensorDriftProbe.swift; sourceTree = "<group>"; };
 		17755099C48B3946BF625DA5 /* RideTexts.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RideTexts.swift; sourceTree = "<group>"; };
 		18B2EE971D653D8DA0E35FC1 /* APIClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APIClient.swift; sourceTree = "<group>"; };
 		20C39AE56EF25A28C7053D00 /* RideTracker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RideTracker.swift; sourceTree = "<group>"; };
@@ -115,6 +117,7 @@
 			isa = PBXGroup;
 			children = (
 				36B5D2EEA109642CC5ED98E7 /* RideRunner.swift */,
+				0393F0E45879E39B614578D3 /* SensorDriftProbe.swift */,
 			);
 			path = Background;
 			sourceTree = "<group>";
@@ -416,6 +419,7 @@
 				B63ECBBFE01C8AEC6C59E0BC /* RideTexts.swift in Sources */,
 				0E340B4DC7021DA62D97773F /* RideTracker.swift in Sources */,
 				C9897F70007AA6802301C654 /* SensorClock.swift in Sources */,
+				F7B9B87AC8A5C01E76FD45A1 /* SensorDriftProbe.swift in Sources */,
 				BF0DF56B08551030B15D21E3 /* Station.swift in Sources */,
 				296B093FA6AA8BA80D74F663 /* StationSearchView.swift in Sources */,
 				E9862B45F7C8E049568BA4F6 /* Theme.swift in Sources */,

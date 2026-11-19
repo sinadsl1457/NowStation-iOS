@@ -3,6 +3,7 @@ import SwiftUI
 /** 탑승 중. 내릴 역 직전이면 화면 전체를 파랑으로 바꿔 주머니에서 꺼냈을 때 바로 알아보게 한다. */
 struct RideScreen: View {
     let ride: ActiveRide
+    var probe: SensorDriftProbe?
     let onEnd: () -> Void
     // 끝내기는 되돌릴 수 없어서(현재역 표시·내릴 역 알림이 멈춤) 한 번 더 묻는다
     @State private var confirming = false
@@ -13,7 +14,7 @@ struct RideScreen: View {
                 AlightContent(ride: ride, onEnd: { confirming = true })
                     .transition(.move(edge: .bottom).combined(with: .opacity))
             } else {
-                RidingContent(ride: ride, onEnd: { confirming = true })
+                RidingContent(ride: ride, probe: probe, onEnd: { confirming = true })
                     .transition(.opacity)
             }
         }
@@ -29,6 +30,7 @@ struct RideScreen: View {
 
 private struct RidingContent: View {
     let ride: ActiveRide
+    var probe: SensorDriftProbe?
     let onEnd: () -> Void
 
     var body: some View {
@@ -56,6 +58,15 @@ private struct RidingContent: View {
             Spacer()
             Label("화면을 꺼도 잠금화면에서 계속 보여요", systemImage: "lock")
                 .font(.footnote).foregroundStyle(Color.muted).padding(.horizontal, 6)
+            if let probe {
+                // 확인용(지울 것): 이전 방식이었다면 움직임 시각이 몇 초 과거로 찍혔을지
+                TimelineView(.periodic(from: .now, by: 1)) { _ in
+                    if let d = probe.drift() {
+                        Text("확인용 · 센서 시각 어긋남(이전 방식) \(Int(d.rounded()))초")
+                            .font(.caption2.monospacedDigit()).foregroundStyle(.orange).padding(.horizontal, 6)
+                    }
+                }
+            }
             Button(action: onEnd) {
                 Text("탑승 끝내기").font(.system(size: 16, weight: .bold)).foregroundStyle(Color(hex: 0x2A3348))
                     .frame(maxWidth: .infinity, minHeight: 54)
