@@ -91,3 +91,11 @@ final class LineSymbolTests: XCTestCase {
         XCTAssertEqual(lineSymbol("신분당선"), "신")
     }
 }
+
+final class BoardedTimeTests: XCTestCase {
+    func test_탑승_시각은_24시간제() {
+        let kst = TimeZone(identifier: "Asia/Seoul")!
+        let afternoon = ISO8601DateFormatter().date(from: "2026-11-19T04:43:00Z")! // 서울 13:43
+        XCTAssertEqual(RideTexts.boardedTime(afternoon, timeZone: kst), "13:43")
+    }
+}

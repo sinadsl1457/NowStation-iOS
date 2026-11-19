@@ -33,6 +33,12 @@ final class RideFlowUITests: XCTestCase {
         XCTAssertTrue(app.staticTexts["기다리는 역"].waitForExistence(timeout: 15))
         snap(app, "4-탑승")
         app.buttons["탑승 끝내기"].tap()
+        XCTAssertTrue(app.alerts["탑승을 끝낼까요?"].waitForExistence(timeout: 5))
+        snap(app, "4b-끝내기-확인")
+        app.alerts.buttons["계속 타기"].tap()
+        XCTAssertTrue(app.staticTexts["기다리는 역"].exists, "계속 타면 탑승 화면 그대로")
+        app.buttons["탑승 끝내기"].tap()
+        app.alerts.buttons["끝내기"].tap()
         XCTAssertTrue(app.staticTexts["최근 경로"].waitForExistence(timeout: 5))
         snap(app, "5-끝내고-홈")
     }

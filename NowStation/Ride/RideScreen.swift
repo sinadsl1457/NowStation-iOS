@@ -4,18 +4,26 @@ import SwiftUI
 struct RideScreen: View {
     let ride: ActiveRide
     let onEnd: () -> Void
+    // 끝내기는 되돌릴 수 없어서(현재역 표시·내릴 역 알림이 멈춤) 한 번 더 묻는다
+    @State private var confirming = false
 
     var body: some View {
         ZStack {
             if ride.view.prepareToAlight {
-                AlightContent(ride: ride, onEnd: onEnd)
+                AlightContent(ride: ride, onEnd: { confirming = true })
                     .transition(.move(edge: .bottom).combined(with: .opacity))
             } else {
-                RidingContent(ride: ride, onEnd: onEnd)
+                RidingContent(ride: ride, onEnd: { confirming = true })
                     .transition(.opacity)
             }
         }
         .animation(.easeOut(duration: 0.45), value: ride.view.prepareToAlight)
+        .alert("탑승을 끝낼까요?", isPresented: $confirming) {
+            Button("계속 타기", role: .cancel) {}
+            Button("끝내기", role: .destructive, action: onEnd)
+        } message: {
+            Text("끝내면 현재역 표시와 내릴 역 알림이 멈춰요.")
+        }
     }
 }
 
@@ -91,7 +99,7 @@ private struct RouteCard: View {
                 Circle().fill(Color(hex: 0xC9D1E0)).frame(width: 12, height: 12)
                 Text(ride.origin).font(.system(size: 16)).foregroundStyle(Color.muted)
                 Spacer()
-                Text("\(ride.startedAt.formatted(.dateTime.hour(.twoDigits(amPM: .omitted)).minute(.twoDigits))) 탑승")
+                Text("\(RideTexts.boardedTime(ride.startedAt)) 탑승")
                     .font(.caption.weight(.medium)).foregroundStyle(Color.muted)
             }
             Rectangle().fill(Color(hex: 0xB8C3D9)).frame(width: 2, height: 26).padding(.leading, 5)

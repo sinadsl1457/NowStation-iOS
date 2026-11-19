@@ -45,6 +45,15 @@ enum RideTexts {
         }
     }
 
+    /** "13:43 탑승"의 시각. 24시간제(오후 1시가 "01:43"으로 보이던 문제), Android와 같게. */
+    static func boardedTime(_ date: Date, timeZone: TimeZone = .current) -> String {
+        let f = DateFormatter()
+        f.locale = Locale(identifier: "en_US_POSIX")
+        f.timeZone = timeZone
+        f.dateFormat = "HH:mm"
+        return f.string(from: date)
+    }
+
     static func activityState(_ ride: ActiveRide) -> RideActivityAttributes.ContentState {
         .init(title: title(ride), detail: detail(ride), chip: chip(ride), line: ride.view.line,
               prepareToAlight: ride.view.prepareToAlight, online: ride.online)
