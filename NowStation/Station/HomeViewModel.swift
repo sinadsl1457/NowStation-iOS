@@ -103,6 +103,8 @@ final class HomeViewModel {
         do {
             let found = try await stations.search(q.trimmingCharacters(in: .whitespaces))
             if query.trimmingCharacters(in: .whitespaces) == q.trimmingCharacters(in: .whitespaces) { results = found }
+        } catch is CancellationError {
+            // 다음 글자가 들어와 앞 검색을 취소한 것. 알릴 일이 아니다
         } catch {
             message = Self.message(of: error)
         }

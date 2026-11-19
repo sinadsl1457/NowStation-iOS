@@ -67,6 +67,8 @@ final class APIClient {
         do {
             (data, response) = try await session.data(for: request)
         } catch {
+            // 앱이 취소한 요청(한글 입력 중 앞 검색 등)은 연결 실패가 아니다
+            if Task.isCancelled || (error as? URLError)?.code == .cancelled { throw CancellationError() }
             throw APIError.network
         }
         let code = (response as? HTTPURLResponse)?.statusCode ?? 0

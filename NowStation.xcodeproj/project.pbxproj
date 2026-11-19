@@ -21,6 +21,7 @@
 		59824F54E6E27594305160A7 /* Ride.swift in Sources */ = {isa = PBXBuildFile; fileRef = ED74B6D0EBE16A23344FB4C2 /* Ride.swift */; };
 		59A56111CC75F82ECE15F786 /* APIClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 18B2EE971D653D8DA0E35FC1 /* APIClient.swift */; };
 		64A3330F07C678FD5AE62CF2 /* RideScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = 32AD9C2E5A747FF957A17676 /* RideScreen.swift */; };
+		7E16A4CB32AC837CEDDD4771 /* SearchCancelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D973AA69CFE7F4279E14E36B /* SearchCancelTests.swift */; };
 		85C7DB377626BE8AD25AAB7A /* Theme.swift in Sources */ = {isa = PBXBuildFile; fileRef = 663147FC2C46F6AE0755F1E1 /* Theme.swift */; };
 		866055191B05B742D8364186 /* NowStationWidget.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 64120F34564FC4E30F1BBAE1 /* NowStationWidget.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		98FB7A527A5A98C798A17F80 /* MotionDetector.swift in Sources */ = {isa = PBXBuildFile; fileRef = E18E6FEB81DAC9390F16DCDB /* MotionDetector.swift */; };
@@ -92,6 +93,7 @@
 		B933E62CE10224DAA8A6CE35 /* NowStationApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NowStationApp.swift; sourceTree = "<group>"; };
 		C63929FD0A5C12C70AF5B316 /* RideLiveActivity.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RideLiveActivity.swift; sourceTree = "<group>"; };
 		D49BBB646C4E1993E3667400 /* NowStation.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = NowStation.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		D973AA69CFE7F4279E14E36B /* SearchCancelTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchCancelTests.swift; sourceTree = "<group>"; };
 		D99314D39BEFD80984F67B90 /* NowStationUITests.xctest */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.cfbundle; path = NowStationUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		E18E6FEB81DAC9390F16DCDB /* MotionDetector.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MotionDetector.swift; sourceTree = "<group>"; };
 		E1AF08DF07AFFDD98C2517C5 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
@@ -147,6 +149,7 @@
 				7B8C7B8C887FBD473FA6363E /* MotionDetectorTests.swift */,
 				A9078D18D44D1656584BADBC /* RideScreenRenderTests.swift */,
 				AD9CF8586E24C2A42AF0E2D7 /* RideTrackerTests.swift */,
+				D973AA69CFE7F4279E14E36B /* SearchCancelTests.swift */,
 			);
 			path = NowStationTests;
 			sourceTree = "<group>";
@@ -412,6 +415,7 @@
 				51ACCA91E345BA53CF8C58CC /* MotionDetectorTests.swift in Sources */,
 				040920612EB89A1ADF09706E /* RideScreenRenderTests.swift in Sources */,
 				01E51A1EBA11FA22D8F60214 /* RideTrackerTests.swift in Sources */,
+				7E16A4CB32AC837CEDDD4771 /* SearchCancelTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

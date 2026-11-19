@@ -1,0 +1,51 @@
+import XCTest
+@testable import NowStation
+
+/** 응답을 주지 않는 가짜 서버(요청이 도는 중에 취소되는 상황을 만든다). */
+final class HangingURLProtocol: URLProtocol {
+    override class func canInit(with request: URLRequest) -> Bool { true }
+    override class func canonicalRequest(for request: URLRequest) -> URLRequest { request }
+    override func startLoading() {}
+    override func stopLoading() {}
+}
+
+final class SearchCancelTests: XCTestCase {
+    func test_도는_중인_요청을_취소하면_연결_실패가_아니라_취소다() async {
+        let config = URLSessionConfiguration.ephemeral
+        config.protocolClasses = [HangingURLProtocol.self]
+        let api = APIClient(baseURL: URL(string: "https://example.test/")!, session: URLSession(configuration: config))
+        let task = Task { () -> [String] in try await api.get("api/lines") }
+        try? await Task.sleep(nanoseconds: 200_000_000)
+        task.cancel()
+        do {
+            _ = try await task.value
+            XCTFail("취소됐는데 성공")
+        } catch {
+            XCTAssertTrue(error is CancellationError, "한글 입력 중 앞 검색을 취소한 것을 '서버에 연결할 수 없어요'로 띄우면 안 된다: \(error)")
+        }
+    }
+
+    @MainActor
+    func test_글자를_이어_치는_동안_앞_검색이_취소돼도_오류를_띄우지_않는다() async {
+        final class SlowStations: StationRepository {
+            func search(_ query: String) async throws -> [Station] {
+                try await Task.sleep(nanoseconds: 1_000_000_000) // 시드니 서버처럼 느린 응답. 취소되면 CancellationError
+                return [Station(name: query, lines: [])]
+            }
+            func lines() async throws -> [String] { [] }
+        }
+        let vm = HomeViewModel(stations: SlowStations(), tracker: RideTracker(repository: FakeRideRepository()), recentStore: MemoryRecentStore())
+        vm.queryChanged("태")
+        try? await Task.sleep(nanoseconds: 400_000_000) // "태" 검색이 서버로 간 뒤
+        vm.queryChanged("태평")
+        try? await Task.sleep(nanoseconds: 1_500_000_000)
+        XCTAssertNil(vm.message)
+        XCTAssertEqual(vm.results.map(\.name), ["태평"])
+    }
+}
+
+final class MemoryRecentStore: RecentRouteStore {
+    var routes: [RecentRoute] = []
+    func load() -> [RecentRoute] { routes }
+    func save(_ routes: [RecentRoute]) { self.routes = routes }
+}
