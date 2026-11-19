@@ -49,7 +49,7 @@ private struct Header: View {
                     Text("지금역").font(.system(size: 30, weight: .black)).foregroundStyle(.white)
                     Text("v\(version)").font(.caption.weight(.medium)).foregroundStyle(.white.opacity(0.7))
                 }
-                Text("타는 역과 내릴 역을 고르면, 탄 열차를 찾아\n잠금화면에 현재역을 보여 줘요")
+                Text("열차에 타서 지금 탄 열차를 고르면\n잠금화면에 현재역을 보여 줘요")
                     .font(.system(size: 16)).foregroundStyle(.white.opacity(0.88))
                     .padding(.top, 6)
                 TrackDecoration().frame(width: 250, height: 24).padding(.top, 22)
@@ -214,8 +214,8 @@ private struct HowItWorks: View {
         VStack(alignment: .leading, spacing: 10) {
             SectionTitle(text: "이렇게 써요")
             VStack(alignment: .leading, spacing: 14) {
-                step(1, "타는 역과 내릴 역을 고르고 탑승 시작")
-                step(2, "열차에 타면 폰 움직임으로 탄 열차를 찾아요")
+                step(1, "열차에 탄 뒤 타는 역·내릴 역을 고르고 탑승 시작")
+                step(2, "목록에서 지금 탄 열차를 골라요")
                 step(3, "잠금화면에 현재역, 내리기 전엔 진동")
             }
             .padding(16)
