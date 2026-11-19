@@ -17,7 +17,6 @@ final class RideRunner: NSObject {
     private let tracker: RideTracker
     private let probe: SensorDriftProbe
     private let location = CLLocationManager()
-    private var backgroundSession: CLBackgroundActivitySession?
     private let motion = CMMotionManager()
     private let motionQueue = OperationQueue()
     private var detector = MotionDetector()
@@ -37,6 +36,14 @@ final class RideRunner: NSObject {
         motionQueue.maxConcurrentOperationCount = 1
         location.delegate = self
         tracker.onChange = { [weak self] old, new in self?.changed(old, new) }
+        clearLeftovers()
+    }
+
+    /** 탑승 중에 앱이 죽으면 Live Activity가 운영체제에 남는다. 앱은 탑승을 이어 가지 않으므로 켜질 때 지운다. */
+    private func clearLeftovers() {
+        for a in Activity<RideActivityAttributes>.activities {
+            Task { await a.end(nil, dismissalPolicy: .immediate) }
+        }
     }
 
     /** 처음 시작 전에 한 번: 위치·알림 권한. */
@@ -80,9 +87,7 @@ final class RideRunner: NSObject {
         refreshTask = nil
         motion.stopDeviceMotionUpdates()
         activityManager.stopActivityUpdates()
-        location.stopUpdatingLocation()
-        backgroundSession?.invalidate()
-        backgroundSession = nil
+        letSleep()
         let a = activity
         activity = nil
         Task { await a?.end(nil, dismissalPolicy: .immediate) }
@@ -97,7 +102,13 @@ final class RideRunner: NSObject {
         location.allowsBackgroundLocationUpdates = true
         location.showsBackgroundLocationIndicator = true
         location.startUpdatingLocation()
-        backgroundSession = CLBackgroundActivitySession()
+    }
+
+    /** 탑승이 끝나면 위치 갱신과 백그라운드 허용을 함께 끈다. */
+    private func letSleep() {
+        location.stopUpdatingLocation()
+        location.allowsBackgroundLocationUpdates = false
+        location.showsBackgroundLocationIndicator = false
     }
 
     // MARK: 움직임

@@ -11,7 +11,7 @@
 - 무료 서명 한계: 7일마다 다시 설치, 한 폰에 무료 서명 앱 3개까지, APNs·시간 민감 알림 없음
 
 ## APNs 없이 탑승을 따라가는 방법
-- 탑승하는 동안 위치 갱신을 켜 둔다(`UIBackgroundModes: location`, `CLBackgroundActivitySession`). 앱이 잠들지 않게 하려는 것이고 위치 값은 쓰지 않는다(지하라 부정확)
+- 탑승하는 동안 위치 갱신을 켜 둔다(`UIBackgroundModes: location`). `CLBackgroundActivitySession`은 쓰지 않는다: 앱이 죽어도 운영체제에 남아 파란 화살표가 꺼지지 않았다(실기기). 앱이 잠들지 않게 하려는 것이고 위치 값은 쓰지 않는다(지하라 부정확)
 - 깨어 있는 동안 가속도(20Hz) → `MotionDetector`(Android와 같은 규칙) → 서버, 5초마다 상태 갱신
 - 잠금화면·다이나믹 아일랜드는 Live Activity를 **앱이 직접** 갱신. 내릴 역 직전에는 `AlertConfiguration`으로 화면을 켜고 소리, 그리고 로컬 알림 + 진동
 - 사용자가 앱을 위로 밀어 강제 종료하면 멈춘다(iOS는 다시 띄워 주지 않음)
