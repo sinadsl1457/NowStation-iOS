@@ -13,6 +13,7 @@
 		0E340B4DC7021DA62D97773F /* RideTracker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20C39AE56EF25A28C7053D00 /* RideTracker.swift */; };
 		2351249B090F191B470D1422 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 69E13FA465756E19953AAE80 /* Assets.xcassets */; };
 		26FA5FC3E33337A703797AED /* HomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FDB0EE34E99A4D3A69036EA /* HomeView.swift */; };
+		282D2E531418204E6C481DB2 /* ScreenshotUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8732ADD0532FE301A8879F59 /* ScreenshotUITests.swift */; };
 		296B093FA6AA8BA80D74F663 /* StationSearchView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8EAC0BB0AE55758969FC0A82 /* StationSearchView.swift */; };
 		351F225899C575DD3AC65EBA /* RideRunner.swift in Sources */ = {isa = PBXBuildFile; fileRef = 36B5D2EEA109642CC5ED98E7 /* RideRunner.swift */; };
 		3732F0A0149221BACDC0AA95 /* HomeViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = E22EA8A0120E6DA3A20DEBDE /* HomeViewModel.swift */; };
@@ -86,6 +87,7 @@
 		663147FC2C46F6AE0755F1E1 /* Theme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Theme.swift; sourceTree = "<group>"; };
 		69E13FA465756E19953AAE80 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		7B8C7B8C887FBD473FA6363E /* MotionDetectorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MotionDetectorTests.swift; sourceTree = "<group>"; };
+		8732ADD0532FE301A8879F59 /* ScreenshotUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScreenshotUITests.swift; sourceTree = "<group>"; };
 		8997374C66FBEA6EA8196C78 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		8EAC0BB0AE55758969FC0A82 /* StationSearchView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StationSearchView.swift; sourceTree = "<group>"; };
 		8FDB0EE34E99A4D3A69036EA /* HomeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeView.swift; sourceTree = "<group>"; };
@@ -193,6 +195,7 @@
 			isa = PBXGroup;
 			children = (
 				A2A6490E1B6844831DCDA3C1 /* RideFlowUITests.swift */,
+				8732ADD0532FE301A8879F59 /* ScreenshotUITests.swift */,
 			);
 			path = NowStationUITests;
 			sourceTree = "<group>";
@@ -387,6 +390,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				01C800F87B4FC7AE3EC29D5F /* RideFlowUITests.swift in Sources */,
+				282D2E531418204E6C481DB2 /* ScreenshotUITests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
