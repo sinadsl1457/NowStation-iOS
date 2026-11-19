@@ -1,7 +1,7 @@
 # NowStation iOS (지금역)
 
 지하철에서 **지금 무슨 역인지**를 잠금화면과 다이나믹 아일랜드에 보여 주는 앱의 iOS 버전입니다.
-타는 역만 고르고 시작하면, 열차에 탄 순간 그 열차를 찾아 따라가고 내릴 역 직전에 알려 줍니다.
+타는 역과 내릴 역을 고르고 시작하면, 열차에 탄 순간 그 열차를 찾아 따라가고 내릴 역 직전에 알려 줍니다.
 
 - 탄 열차를 찾는 판단은 서버가 합니다 → [NowStation-Server](https://github.com/sinadsl1457/NowStation-Server)(구조도와 판단 원리)
 - 먼저 만든 Android 앱(Google Play 출시 준비 중) → [NowStation-Android](https://github.com/sinadsl1457/NowStation-Android)
