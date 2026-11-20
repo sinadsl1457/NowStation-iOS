@@ -25,8 +25,9 @@ struct NowStationApp: App {
 
     var body: some Scene {
         WindowGroup {
-            RootView(tracker: model.tracker, home: model.home, probe: model.probe)
-                .onAppear { model.runner.requestPermissions() }
+            RootView(tracker: model.tracker, home: model.home, probe: model.probe, askPermissions: model.runner.requestPermissions)
+                // 처음 실행이면 가이드 마지막 장 버튼에서 묻는다(이유를 보여 준 뒤). 이미 본 사람은 전처럼 켤 때
+                .onAppear { if GuideStore.seen { model.runner.requestPermissions() } }
         }
     }
 }
@@ -35,9 +36,11 @@ struct RootView: View {
     let tracker: RideTracker
     let home: HomeViewModel
     var probe: SensorDriftProbe?
-    // 첫 실행 애니메이션: 앱을 새로 켤 때 홈에서만. UI 테스트는 덮개가 첫 탭을 가져가지 않게 끈다
+    var askPermissions: () -> Void = {}
+    // 첫 실행 애니메이션: 앱을 새로 켤 때 홈에서만. UI 테스트는 덮개가 첫 탭을 가져가지 않게 애니메이션·가이드를 끈다
     @State private var intro = LaunchIntro()
     private let skipIntro = ProcessInfo.processInfo.arguments.contains("-skipLaunchIntro")
+    @State private var showGuide = !GuideStore.seen
 
     var body: some View {
         Group {
@@ -49,10 +52,20 @@ struct RootView: View {
             } else {
                 let running = !(intro.finished || skipIntro)
                 ZStack {
-                    HomeView(vm: home)
+                    HomeView(vm: home, onShowGuide: { withAnimation(.easeOut(duration: 0.35)) { showGuide = true } })
                         .environment(\.launchIntro, running ? intro : nil)
+                    // 런치 애니메이션이 끝나 홈이 된 뒤 아래에서 올라온다. 처음 한 번만(다시 보기는 홈에서)
+                    if !running && showGuide && !skipIntro {
+                        GuideView {
+                            GuideStore.markSeen()
+                            withAnimation(.easeOut(duration: 0.3)) { showGuide = false }
+                            askPermissions()
+                        }
+                        .transition(.move(edge: .bottom))
+                    }
                     if running { LaunchOverlay(intro: intro) }
                 }
+                .animation(.easeOut(duration: 0.4), value: running)
             }
         }
         // 파란 화면(홈 머리 영역, 내릴 준비)에서는 상태 표시줄 글자를 흰색으로. 화면 색은 모두 직접 정해 두었다

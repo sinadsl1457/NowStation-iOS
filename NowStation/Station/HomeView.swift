@@ -3,6 +3,7 @@ import SwiftUI
 /** 홈. 역 검색은 칸을 눌렀을 때만 덮어서 연다(첫 화면에 긴 목록을 깔지 않음). Android 홈과 같은 배치. */
 struct HomeView: View {
     @Bindable var vm: HomeViewModel
+    var onShowGuide: () -> Void = {}
     @Environment(\.launchIntro) private var intro
 
     var body: some View {
@@ -17,6 +18,9 @@ struct HomeView: View {
                         Group {
                             if vm.recent.isEmpty { HowItWorks() } else { RecentRoutes(vm: vm) }
                             if !vm.lines.isEmpty { SupportedLines(lines: vm.lines) }
+                            Button("사용법 다시 보기", action: onShowGuide)
+                                .font(.system(size: 14, weight: .semibold)).foregroundStyle(Color.brand)
+                                .frame(maxWidth: .infinity, minHeight: 44)
                             // 공공데이터 이용 조건: 출처 표시
                             Text("열차 위치: 서울특별시 열린데이터광장 실시간 지하철 정보")
                                 .font(.caption2).foregroundStyle(Color.muted)

@@ -22,6 +22,7 @@ NowStation/
 ├ App/       진입점. 탑승 중이면 탑승 화면, 아니면 홈(화면이 둘뿐이라 이동 라이브러리 없음)
 ├ Core/      서버 API(연결 실패·404·400·서버 오류 구분), 색·노선 칩(위젯과 같이 씀)
 ├ Station/   홈·역 검색·최근 경로. 상태는 HomeViewModel
+├ Guide/     처음 실행 가이드 4장(+ 봤는지 저장). 홈과 따로 생기고 사라져서(처음 한 번·다시 보기) 따로 둠. 알림·위치 권한은 마지막 장 버튼에서 묻는다
 └ Ride/      진행 중인 탑승. 화면이 사라져도 계속돼야 해서 앱에 하나인 RideTracker가 갖는다
    ├ Motion/      가속도 → 출발·도착 사건(순수 Swift, 합성 신호로 테스트)
    └ Background/  RideRunner: 깨어 있기, 센서, 5초 갱신, Live Activity, 내릴 역 알림(Android 포그라운드 서비스 자리)
@@ -29,6 +30,7 @@ Shared/          Live Activity 데이터 모양(앱 + 위젯)
 NowStationWidget/ 잠금화면·다이나믹 아일랜드 그리기만
 ```
 - 탑승 화면은 이번정거장처럼: 경로 구간 칩(태평 ▶ 선릉, 선릉 ▶ 강남) + 가로 노선도(`StripCard`, 15초마다)에서 서버가 골라 둔 다음 열차를 칠하고, 다른 열차를 누르면 바꾼다. 고른 열차는 그대로 따라간다(폰 움직임으로 바꾸지 않음). 환승역에서는 "갈아탈 준비하세요" 알림 → 안내 띠로 다음 구간 열차 고르기
+- 앱을 새로 켜면 런치 애니메이션(`LaunchIntro`/`LaunchOverlay`, HomeView.swift: 시작 화면 아이콘 → 홈 머리의 노선 그림) 뒤 처음 한 번 가이드. 시작 화면 설정은 `project.yml`의 `UILaunchScreen`(Info.plist를 직접 고치면 xcodegen이 지운다). UI 테스트는 `-skipLaunchIntro`로 둘 다 끈다
 - 시간은 주입(`RideTracker(now:)`). 문구는 `RideTexts` 한곳(화면·잠금화면이 같이 씀)
 
 ## 확인

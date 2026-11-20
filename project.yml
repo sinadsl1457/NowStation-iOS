@@ -34,7 +34,11 @@ targets:
         CFBundleDisplayName: 지금역
         CFBundleShortVersionString: $(MARKETING_VERSION)
         CFBundleVersion: $(CURRENT_PROJECT_VERSION)
-        UILaunchScreen: {}
+        # 시작 화면: 홈 머리 색 + 가운데 아이콘. 첫 실행 애니메이션(LaunchOverlay)이 같은 자리·크기에서 이어 그린다
+        UILaunchScreen:
+          UIColorName: LaunchBackground
+          UIImageName: LaunchLogo
+          UIImageRespectsSafeAreaInsets: false
         UISupportedInterfaceOrientations: [UIInterfaceOrientationPortrait]
         APIBaseURL: $(API_BASE_URL)
         NSAppTransportSecurity:
