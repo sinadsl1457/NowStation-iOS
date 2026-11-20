@@ -7,6 +7,9 @@
 - 먼저 만든 Android 앱(Google Play 출시 준비 중) → [NowStation-Android](https://github.com/sinadsl1457/NowStation-Android)
 - 이 iOS 앱은 화면·문구·판단 규칙을 Android와 같게 옮겼고, **무료 Apple 계정으로 내 폰에 설치해 실제 지하철에서 시험하는 용도**입니다.
 
+<p align="center"><img src="docs/demo/nowstation-demo.gif" width="300" alt="태평에서 야탑까지: 역 고르기, 다가오는 열차 고르기, 한 정거장 전 알림, 도착"></p>
+<p align="center"><sub>2026-11-16 오전 녹화 열차 데이터를 재생 서버로 흘려 시뮬레이터에서 찍은 장면(5분 23초 → 29초 요약, <a href="docs/demo/nowstation-demo.mp4">mp4</a>). 시뮬레이터에는 폰 센서가 없어 공공 데이터 속도로 진행</sub></p>
+
 | 홈 | 역 검색 | 다가오는 열차 고르기 | 도착 |
 |---|---|---|---|
 | <img src="docs/screenshots/home.png" width="190"> | <img src="docs/screenshots/search.png" width="190"> | <img src="docs/screenshots/riding.png" width="190"> | <img src="docs/screenshots/alight.png" width="190"> |
