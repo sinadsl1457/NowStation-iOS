@@ -278,10 +278,6 @@ private struct StripCard: View {
             .padding(.horizontal, 14).padding(.vertical, 16)
             .frame(maxWidth: .infinity, alignment: .leading)
             .background(.white, in: RoundedRectangle(cornerRadius: 22))
-            if !riding {
-                Text("\(strip.leg.from)에 서지 않는 급행, \(strip.leg.to)까지 가지 않는 열차는 빼고 보여 줘요")
-                    .font(.system(size: 12)).foregroundStyle(Color.muted).padding(.horizontal, 4)
-            }
         }
     }
 
