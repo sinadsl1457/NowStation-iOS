@@ -224,7 +224,9 @@ private struct StripCard: View {
         let c = Color.line(strip.leg.line)
         let selected = strip.trains.first(where: \.selected)
         let selIdx = selected.flatMap { strip.stations.firstIndex(of: $0.station) } ?? -1
+        // 내릴 준비·도착 뒤에는 고르기를 다시 띄우지 않는다(도착 순간 서버가 따라가던 열차를 놓아 '아직 안 탔다'로 보였다)
         let riding = selIdx > strip.boardIndex || (selIdx == strip.boardIndex && selected?.status == "DEPARTED")
+            || ride.view.prepareToAlight || ride.view.status == .arrived
         let from = riding ? strip.boardIndex : 0
         let to = riding ? strip.stations.count - 1 : min(strip.boardIndex + 1, strip.stations.count - 1)
         let window = Array(strip.stations[from...to])
