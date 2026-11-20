@@ -35,6 +35,9 @@ struct RootView: View {
     let tracker: RideTracker
     let home: HomeViewModel
     var probe: SensorDriftProbe?
+    // 첫 실행 애니메이션: 앱을 새로 켤 때 홈에서만. UI 테스트는 덮개가 첫 탭을 가져가지 않게 끈다
+    @State private var intro = LaunchIntro()
+    private let skipIntro = ProcessInfo.processInfo.arguments.contains("-skipLaunchIntro")
 
     var body: some View {
         Group {
@@ -42,8 +45,14 @@ struct RootView: View {
                 RideScreen(ride: ride, probe: probe,
                            loadStrip: { try await tracker.strip() },
                            onPick: { try await tracker.choose($0, line: $1) }) { Task { await tracker.end() } }
+                    .onAppear { intro.finished = true }
             } else {
-                HomeView(vm: home)
+                let running = !(intro.finished || skipIntro)
+                ZStack {
+                    HomeView(vm: home)
+                        .environment(\.launchIntro, running ? intro : nil)
+                    if running { LaunchOverlay(intro: intro) }
+                }
             }
         }
         // 파란 화면(홈 머리 영역, 내릴 준비)에서는 상태 표시줄 글자를 흰색으로. 화면 색은 모두 직접 정해 두었다

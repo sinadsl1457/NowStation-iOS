@@ -4,6 +4,7 @@ import XCTest
 final class RideFlowUITests: XCTestCase {
     func test_역을_골라_탑승을_시작하고_끝낸다() {
         let app = XCUIApplication()
+        app.launchArguments += ["-skipLaunchIntro"] // 첫 실행 애니메이션 덮개가 첫 탭을 가져가지 않게
         app.launch()
         addUIInterruptionMonitor(withDescription: "권한") { alert in
             for label in ["허용", "Allow", "앱을 사용하는 동안 허용", "Allow While Using App"] where alert.buttons[label].exists {

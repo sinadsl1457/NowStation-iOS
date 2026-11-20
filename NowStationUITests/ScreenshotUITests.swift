@@ -7,6 +7,7 @@ import XCTest
 final class ScreenshotUITests: XCTestCase {
     func test_README_화면() {
         let app = XCUIApplication()
+        app.launchArguments += ["-skipLaunchIntro"] // 첫 실행 애니메이션 덮개가 첫 탭을 가져가지 않게
         app.launch()
         app.staticTexts["고르기"].firstMatch.tap()
         XCTAssertTrue(app.staticTexts["가천대"].waitForExistence(timeout: 10))
