@@ -14,6 +14,12 @@
 |---|---|---|---|
 | <img src="docs/screenshots/home.png" width="190"> | <img src="docs/screenshots/search.png" width="190"> | <img src="docs/screenshots/riding.png" width="190"> | <img src="docs/screenshots/alight.png" width="190"> |
 
+| 처음 실행 | 가이드 1 | 가이드 2 | 가이드 3 | 가이드 4 |
+|---|---|---|---|---|
+| <img src="docs/demo/first-run.gif" width="150" alt="시작 화면 아이콘이 홈의 노선 그림으로 바뀌며 홈이 자리 잡고, 가이드 4장이 올라온다"> | <img src="docs/screenshots/guide-1.png" width="150"> | <img src="docs/screenshots/guide-2.png" width="150"> | <img src="docs/screenshots/guide-3.png" width="150"> | <img src="docs/screenshots/guide-4.png" width="150"> |
+
+<sub>앱을 처음 켜면 시작 화면의 아이콘이 홈 머리의 노선 그림으로 바뀌며 홈이 자리 잡고(약 1.25초, 코드로 그림), 가이드 4장이 올라옵니다. 알림·위치 권한은 마지막 장 버튼에서 묻고, 가이드는 홈 오른쪽 위 ? 로 다시 봅니다(<a href="docs/demo/first-run.mp4">mp4</a>, 시뮬레이터에서 GuideUITests가 넘기며 녹화).</sub>
+
 <sub>홈·역 검색은 시뮬레이터에서 실제 서버를 상대로 UI 테스트가 누르며 찍은 화면, 탑승 중·내릴 역 직전은 같은 화면 코드를 테스트에서 그린 것입니다(실제 열차 없이는 그 상태가 되지 않아서).</sub>
 
 ## 기술적으로 신경 쓴 부분
