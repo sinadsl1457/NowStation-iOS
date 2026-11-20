@@ -17,11 +17,13 @@ struct RideView: Equatable, Decodable {
     var remainingStops: Int?
     /** 놓침·바꿈을 잠깐 알린다. */
     var notice: RideNoticeKind?
+    /** 최종 목적지까지 남은 정거장(늘 보여 주는 숫자. 환승이 여러 번이어도 하나). */
+    var totalRemainingStops: Int?
 
-    enum CodingKeys: String, CodingKey { case rideId, status, line, thisStation, nextStation, prepareToAlight, legs, trainNo, target, remainingStops, notice }
+    enum CodingKeys: String, CodingKey { case rideId, status, line, thisStation, nextStation, prepareToAlight, legs, trainNo, target, remainingStops, notice, totalRemainingStops }
 
     init(rideId: String, status: RideStatus, line: String? = nil, thisStation: String? = nil, nextStation: String? = nil, prepareToAlight: Bool = false,
-         legs: [RideLeg] = [], trainNo: String? = nil, target: String? = nil, remainingStops: Int? = nil, notice: RideNoticeKind? = nil) {
+         legs: [RideLeg] = [], trainNo: String? = nil, target: String? = nil, remainingStops: Int? = nil, notice: RideNoticeKind? = nil, totalRemainingStops: Int? = nil) {
         self.rideId = rideId
         self.status = status
         self.line = line
@@ -33,6 +35,7 @@ struct RideView: Equatable, Decodable {
         self.target = target
         self.remainingStops = remainingStops
         self.notice = notice
+        self.totalRemainingStops = totalRemainingStops
     }
 
     init(from decoder: Decoder) throws {
@@ -48,6 +51,7 @@ struct RideView: Equatable, Decodable {
         target = try c.decodeIfPresent(String.self, forKey: .target)
         remainingStops = try c.decodeIfPresent(Int.self, forKey: .remainingStops)
         notice = try c.decodeIfPresent(String.self, forKey: .notice).flatMap(RideNoticeKind.init(rawValue:))
+        totalRemainingStops = try c.decodeIfPresent(Int.self, forKey: .totalRemainingStops)
     }
 }
 

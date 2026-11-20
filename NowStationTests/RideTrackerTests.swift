@@ -72,6 +72,15 @@ final class RideTrackerTests: XCTestCase {
         XCTAssertEqual(RideTexts.title(ride(RideView(rideId: "r", status: .moving, thisStation: "강남", prepareToAlight: true, target: "강남"))), "곧 강남, 내릴 준비하세요")
     }
 
+    func test_남은_정거장은_늘_최종_목적지까지_환승은_한_정거장_전_띠로만() {
+        let legs = [RideLeg(line: "수인분당선", from: "태평", to: "선릉"), RideLeg(line: "2호선", from: "선릉", to: "강남")]
+        func ride(_ v: RideView) -> ActiveRide { ActiveRide(origin: "태평", destination: "강남", view: v, online: true, updatedAt: t0, startedAt: t0) }
+        let v = RideView(rideId: "r", status: .moving, line: "수인분당선", thisStation: "수서", nextStation: "대모산입구", legs: legs, target: "선릉", remainingStops: 6, totalRemainingStops: 8)
+        XCTAssertEqual(RideTexts.remaining(ride(v)), "강남까지 8정거장")
+        let near = RideView(rideId: "r", status: .moving, line: "수인분당선", thisStation: "한티", nextStation: "선릉", prepareToAlight: true, legs: legs, target: "선릉", remainingStops: 1, totalRemainingStops: 3)
+        XCTAssertEqual(RideTexts.banner(ride(near)), "다음 역 선릉 · 2호선으로 갈아타세요")
+    }
+
     func test_서버_응답의_구간과_열차를_읽는다() throws {
         let json = #"{"rideId":"r1","status":"MOVING","line":"수인분당선","thisStation":"수서","nextStation":"대모산입구","prepareToAlight":false,"legs":[{"line":"수인분당선","from":"태평","to":"선릉"},{"line":"2호선","from":"선릉","to":"강남"}],"trainNo":"6206","target":"선릉","remainingStops":6,"notice":"TRANSFER"}"#
         let v = try JSONDecoder().decode(RideView.self, from: Data(json.utf8))

@@ -50,10 +50,14 @@ enum RideTexts {
         }
     }
 
-    /** "선릉까지 6정거장". 구간 끝(환승역·내릴 역)까지. 모르면 nil. */
+    /**
+     * "강남까지 8정거장": 늘 최종 목적지까지(사용자 피드백: '선릉까지 6정거장'은 선릉을 목적지로 오해하고, 환승이 여러 번이면 구간별로 다 못 보여 줌).
+     * 환승은 그때그때 띠·진동으로만 알린다. 서버가 전체 수를 안 주면(옛 서버) 구간 끝까지. Android와 같은 문구.
+     */
     static func remaining(_ ride: ActiveRide) -> String? {
-        guard let target = ride.view.target, let n = ride.view.remainingStops else { return nil }
-        return n == 0 ? "이번 역이 \(target)이에요" : "\(target)까지 \(n)정거장"
+        guard let dest = ride.destination ?? ride.view.target, let n = ride.view.totalRemainingStops ?? ride.view.remainingStops else { return nil }
+        let name = ride.view.totalRemainingStops != nil ? dest : (ride.view.target ?? dest)
+        return n == 0 ? "이번 역이 \(name)이에요" : "\(name)까지 \(n)정거장"
     }
 
     /** 노선도 위 열차의 그 역에서의 상태: 공공 데이터 그대로라 위쪽 "이번 정거장"(다가오는 역)과 헷갈리지 않게 적는다. */
@@ -95,7 +99,8 @@ enum RideTexts {
     static func banner(_ ride: ActiveRide) -> String {
         let v = ride.view
         if v.prepareToAlight, let target = v.target, v.thisStation != target {
-            return isTransfer(ride) ? "다음 역 \(target), 갈아탈 준비하세요" : "다음 역 \(target), 내릴 준비하세요"
+            let nextLine = v.legs.first(where: { $0.from == target })?.line ?? "다음 노선"
+            return isTransfer(ride) ? "다음 역 \(target) · \(nextLine)으로 갈아타세요" : "다음 역 \(target), 내릴 준비하세요"
         }
         guard let no = v.trainNo else { return "탄 열차를 아래 노선도에서 골라 주세요" }
         if v.notice == .transfer {
@@ -116,6 +121,6 @@ enum RideTexts {
 
     static func activityState(_ ride: ActiveRide) -> RideActivityAttributes.ContentState {
         .init(title: title(ride), detail: remaining(ride) ?? detail(ride), chip: chip(ride), line: ride.view.line,
-              prepareToAlight: ride.view.prepareToAlight, online: ride.online, remaining: ride.view.remainingStops)
+              prepareToAlight: ride.view.prepareToAlight, online: ride.online, remaining: ride.view.totalRemainingStops ?? ride.view.remainingStops)
     }
 }
