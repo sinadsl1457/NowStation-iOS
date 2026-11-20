@@ -330,7 +330,7 @@ private struct AlertArt: View {
                 .padding(.horizontal, 14).padding(.top, 70)
                 VStack(alignment: .leading, spacing: 2) {
                     Text("지금역 · 지금").font(.system(size: 11, weight: .bold)).foregroundStyle(Color(hex: 0x8A5A00))
-                    Text("다음 역 선릉 · 2호선으로 갈아타세요").font(.system(size: 13, weight: .heavy)).lineLimit(1).minimumScaleFactor(0.8).foregroundStyle(Color.ink)
+                    Text("다음 역 선릉\n2호선으로 갈아타세요").font(.system(size: 14, weight: .heavy)).foregroundStyle(Color.ink)
                 }
                 .frame(maxWidth: .infinity, alignment: .leading)
                 .padding(.horizontal, 12).padding(.vertical, 10)
