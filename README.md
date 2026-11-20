@@ -57,6 +57,8 @@ Swift·SwiftUI·Observation(iOS 17+), 외부 라이브러리 없음. 프로젝�
 
 ## 테스트
 
+**실제 지하철 탑승 시험(2026-11-20, 이 앱을 iPhone에 설치)**: 수인분당선 야탑 → 복정(6120), 복정 → 모란(6591, 골라 둔 열차를 목록에서 바꿈). 이번 역·남은 정거장·한 정거장 전 알림·도착이 실제 열차와 맞는 타이밍에 바뀜(서버 로그로 확인, 시험은 계속)
+
 **단위 35개 + 화면 흐름 3개**(`xcodebuild test -scheme NowStation -destination 'platform=iOS Simulator,name=iPhone 18 Pro'`, 2026-11-20 전부 통과)
 
 **탑승 따라가기(`RideTrackerTests` 9)**: 앱의 핵심 상태
