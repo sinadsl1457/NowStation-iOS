@@ -7,7 +7,7 @@
 - 먼저 만든 Android 앱(Google Play 출시 준비 중) → [NowStation-Android](https://github.com/sinadsl1457/NowStation-Android)
 - 이 iOS 앱은 화면·문구·판단 규칙을 Android와 같게 옮겼고, **무료 Apple 계정으로 내 폰에 설치해 실제 지하철에서 시험하는 용도**입니다.
 
-| 홈 | 역 검색 | 탑승 중 | 내릴 역 직전 |
+| 홈 | 역 검색 | 다가오는 열차 고르기 | 도착 |
 |---|---|---|---|
 | <img src="docs/screenshots/home.png" width="190"> | <img src="docs/screenshots/search.png" width="190"> | <img src="docs/screenshots/riding.png" width="190"> | <img src="docs/screenshots/alight.png" width="190"> |
 
