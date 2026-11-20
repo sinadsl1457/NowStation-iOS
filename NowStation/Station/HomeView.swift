@@ -12,15 +12,12 @@ struct HomeView: View {
             let f = intro.map { LaunchIntro.Frame(t: $0.time(timeline.date)) }
             ScrollView {
                 VStack(spacing: 0) {
-                    Header(frame: f) { intro?.track = $0 }
+                    Header(frame: f, onShowGuide: onShowGuide) { intro?.track = $0 }
                     VStack(alignment: .leading, spacing: 24) {
                         HomeRouteCard(vm: vm)
                         Group {
                             if vm.recent.isEmpty { HowItWorks() } else { RecentRoutes(vm: vm) }
                             if !vm.lines.isEmpty { SupportedLines(lines: vm.lines) }
-                            Button("사용법 다시 보기", action: onShowGuide)
-                                .font(.system(size: 14, weight: .semibold)).foregroundStyle(Color.brand)
-                                .frame(maxWidth: .infinity, minHeight: 44)
                             // 공공데이터 이용 조건: 출처 표시
                             Text("열차 위치: 서울특별시 열린데이터광장 실시간 지하철 정보")
                                 .font(.caption2).foregroundStyle(Color.muted)
@@ -49,6 +46,7 @@ struct HomeView: View {
 
 private struct Header: View {
     var frame: LaunchIntro.Frame?
+    var onShowGuide: () -> Void = {}
     var onTrack: (CGRect) -> Void = { _ in }
     private var version: String { Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString") as? String ?? "" }
 
@@ -61,6 +59,16 @@ private struct Header: View {
                 Circle().stroke(Color.white.opacity(0.18), lineWidth: 2)
                     .frame(width: 150, height: 150).offset(x: 205, y: 125)
             }
+            .opacity(frame?.title ?? 1)
+            // 가이드 다시 보기
+            Button(action: onShowGuide) {
+                Text("?").font(.system(size: 16, weight: .bold)).foregroundStyle(.white)
+                    .frame(width: 30, height: 30).overlay(Circle().stroke(.white.opacity(0.6), lineWidth: 1.5))
+                    .frame(width: 44, height: 44)
+            }
+            .accessibilityLabel("사용법 보기")
+            .frame(maxWidth: .infinity, alignment: .trailing)
+            .padding(.top, 68).padding(.trailing, 14)
             .opacity(frame?.title ?? 1)
             VStack(alignment: .leading, spacing: 0) {
                 VStack(alignment: .leading, spacing: 0) {
