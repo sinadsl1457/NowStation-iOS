@@ -51,6 +51,15 @@ final class APIClient {
         return try await send(request)
     }
 
+    /** 응답 본문이 없는 POST(201 등). */
+    func postNoContent<B: Encodable>(_ path: String, body: B) async throws {
+        var request = URLRequest(url: baseURL.appendingPathComponent(path))
+        request.httpMethod = "POST"
+        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+        request.httpBody = try Self.encoder.encode(body)
+        _ = try await data(for: request)
+    }
+
     func delete(_ path: String) async throws {
         var request = URLRequest(url: baseURL.appendingPathComponent(path))
         request.httpMethod = "DELETE"

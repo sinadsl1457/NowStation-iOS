@@ -54,9 +54,11 @@ final class RideRunner: NSObject {
         case (nil, let ride?): begin(ride)
         case (_?, nil): finish()
         case (_, let ride?):
-            let alert = ActiveRide.alightAlertStarted(before: old, after: new)
+            // 설정의 알림 스위치(갈아타기·내릴 역·진동)를 따른다
+            let prefs = AlertSettings.current
+            let alert = ActiveRide.alightAlertStarted(before: old, after: new) && prefs.allows(transfer: RideTexts.isTransfer(ride))
             updateActivity(ride, alert: alert)
-            if alert { alertAlight(ride) }
+            if alert { alertAlight(ride, vibrate: prefs.vibrate) }
         default: break
         }
     }
@@ -151,8 +153,8 @@ final class RideRunner: NSObject {
 
     // MARK: 내릴 역 알림
 
-    private func alertAlight(_ ride: ActiveRide) {
-        AudioServicesPlaySystemSound(kSystemSoundID_Vibrate)
+    private func alertAlight(_ ride: ActiveRide, vibrate: Bool) {
+        if vibrate { AudioServicesPlaySystemSound(kSystemSoundID_Vibrate) }
         let content = UNMutableNotificationContent()
         content.title = RideTexts.title(ride)
         content.body = ride.view.nextStation.map { "다음 역 \($0)" } ?? ""

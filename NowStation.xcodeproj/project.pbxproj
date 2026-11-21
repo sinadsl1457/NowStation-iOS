@@ -16,6 +16,7 @@
 		282D2E531418204E6C481DB2 /* ScreenshotUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8732ADD0532FE301A8879F59 /* ScreenshotUITests.swift */; };
 		296B093FA6AA8BA80D74F663 /* StationSearchView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8EAC0BB0AE55758969FC0A82 /* StationSearchView.swift */; };
 		351F225899C575DD3AC65EBA /* RideRunner.swift in Sources */ = {isa = PBXBuildFile; fileRef = 36B5D2EEA109642CC5ED98E7 /* RideRunner.swift */; };
+		353BF25CB710DA6DB039C880 /* AlertSettings.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01749776B48BF5B74C8C9C9B /* AlertSettings.swift */; };
 		3732F0A0149221BACDC0AA95 /* HomeViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = E22EA8A0120E6DA3A20DEBDE /* HomeViewModel.swift */; };
 		38CF6508F59AE1C67699C7E8 /* GuideUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A3E65AB4B7573831F2C96E2 /* GuideUITests.swift */; };
 		4A5398AE5FD5FC8DC31CDD2B /* RideLiveActivity.swift in Sources */ = {isa = PBXBuildFile; fileRef = C63929FD0A5C12C70AF5B316 /* RideLiveActivity.swift */; };
@@ -82,6 +83,7 @@
 
 /* Begin PBXFileReference section */
 		001ABF49647143E62532774F /* RideActivityAttributes.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RideActivityAttributes.swift; sourceTree = "<group>"; };
+		01749776B48BF5B74C8C9C9B /* AlertSettings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AlertSettings.swift; sourceTree = "<group>"; };
 		020B872E18A33A5093B6E981 /* LineChipRenderTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LineChipRenderTests.swift; sourceTree = "<group>"; };
 		0393F0E45879E39B614578D3 /* SensorDriftProbe.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SensorDriftProbe.swift; sourceTree = "<group>"; };
 		1179BBA9A84B569D8504F531 /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
@@ -240,6 +242,7 @@
 		BF9500E3F1A7BEFE42A2BBE8 /* Settings */ = {
 			isa = PBXGroup;
 			children = (
+				01749776B48BF5B74C8C9C9B /* AlertSettings.swift */,
 				1179BBA9A84B569D8504F531 /* SettingsView.swift */,
 			);
 			path = Settings;
@@ -438,6 +441,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				59A56111CC75F82ECE15F786 /* APIClient.swift in Sources */,
+				353BF25CB710DA6DB039C880 /* AlertSettings.swift in Sources */,
 				88B11361D73B1E64A25CE77E /* GuideView.swift in Sources */,
 				26FA5FC3E33337A703797AED /* HomeView.swift in Sources */,
 				3732F0A0149221BACDC0AA95 /* HomeViewModel.swift in Sources */,
