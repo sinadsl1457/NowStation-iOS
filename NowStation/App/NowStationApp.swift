@@ -40,7 +40,8 @@ struct RootView: View {
     // 첫 실행 애니메이션: 앱을 새로 켤 때 홈에서만. UI 테스트는 덮개가 첫 탭을 가져가지 않게 애니메이션·가이드를 끈다
     @State private var intro = LaunchIntro()
     private let skipIntro = ProcessInfo.processInfo.arguments.contains("-skipLaunchIntro")
-    @State private var showGuide = !GuideStore.seen
+    // UI 테스트(-skipLaunchIntro)는 처음 실행 가이드만 건너뛰고, 설정의 "사용법 다시 보기"로는 연다
+    @State private var showGuide = !GuideStore.seen && !ProcessInfo.processInfo.arguments.contains("-skipLaunchIntro")
 
     var body: some View {
         Group {
@@ -55,7 +56,7 @@ struct RootView: View {
                     HomeView(vm: home, onShowGuide: { withAnimation(.easeOut(duration: 0.35)) { showGuide = true } })
                         .environment(\.launchIntro, running ? intro : nil)
                     // 런치 애니메이션이 끝나 홈이 된 뒤 아래에서 올라온다. 처음 한 번만(다시 보기는 홈에서)
-                    if !running && showGuide && !skipIntro {
+                    if !running && showGuide {
                         GuideView {
                             GuideStore.markSeen()
                             withAnimation(.easeOut(duration: 0.3)) { showGuide = false }

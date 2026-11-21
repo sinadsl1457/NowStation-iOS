@@ -4,6 +4,7 @@ import SwiftUI
 struct HomeView: View {
     @Bindable var vm: HomeViewModel
     var onShowGuide: () -> Void = {}
+    @State private var showSettings = false
     @Environment(\.launchIntro) private var intro
 
     var body: some View {
@@ -12,7 +13,7 @@ struct HomeView: View {
             let f = intro.map { LaunchIntro.Frame(t: $0.time(timeline.date)) }
             ScrollView {
                 VStack(spacing: 0) {
-                    Header(frame: f, onShowGuide: onShowGuide) { intro?.track = $0 }
+                    Header(frame: f, onShowSettings: { showSettings = true }) { intro?.track = $0 }
                     VStack(alignment: .leading, spacing: 24) {
                         HomeRouteCard(vm: vm)
                         Group {
@@ -37,6 +38,7 @@ struct HomeView: View {
         .background(Color.ground)
         .ignoresSafeArea(edges: .top)
         .fullScreenCover(isPresented: $vm.searching) { StationSearchView(vm: vm) }
+        .sheet(isPresented: $showSettings) { SettingsView(onShowGuide: onShowGuide) }
         .alert(vm.message ?? "", isPresented: Binding(get: { vm.message != nil }, set: { if !$0 { vm.message = nil } })) {
             Button("확인", role: .cancel) {}
         }
@@ -46,7 +48,7 @@ struct HomeView: View {
 
 private struct Header: View {
     var frame: LaunchIntro.Frame?
-    var onShowGuide: () -> Void = {}
+    var onShowSettings: () -> Void = {}
     var onTrack: (CGRect) -> Void = { _ in }
     private var version: String { Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString") as? String ?? "" }
 
@@ -60,13 +62,12 @@ private struct Header: View {
                     .frame(width: 150, height: 150).offset(x: 205, y: 125)
             }
             .opacity(frame?.title ?? 1)
-            // 가이드 다시 보기
-            Button(action: onShowGuide) {
-                Text("?").font(.system(size: 16, weight: .bold)).foregroundStyle(.white)
-                    .frame(width: 30, height: 30).overlay(Circle().stroke(.white.opacity(0.6), lineWidth: 1.5))
+            // 설정(사용법 다시 보기·알림·문의·개인정보처리방침)
+            Button(action: onShowSettings) {
+                Image(systemName: "gearshape").font(.system(size: 20, weight: .medium)).foregroundStyle(.white)
                     .frame(width: 44, height: 44)
             }
-            .accessibilityLabel("사용법 보기")
+            .accessibilityLabel("설정")
             .frame(maxWidth: .infinity, alignment: .trailing)
             .padding(.top, 68).padding(.trailing, 14)
             .opacity(frame?.title ?? 1)
