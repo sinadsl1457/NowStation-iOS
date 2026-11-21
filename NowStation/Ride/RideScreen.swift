@@ -258,7 +258,8 @@ private struct StripCard: View {
                             HStack(spacing: 4) {
                                 RoundedRectangle(cornerRadius: 6).fill(t.selected ? c : Color(hex: 0xC9D1E0)).frame(width: 20, height: 20)
                                     .overlay(RoundedRectangle(cornerRadius: 6).stroke(.white, lineWidth: 2))
-                                Text(t.trainNo).font(.system(size: 12, weight: .semibold).monospacedDigit()).foregroundStyle(Color(hex: 0x2A3348))
+                                // 역 이름(13)보다 조금 크게: 움직이는 열차를 승강장에서 한눈에(실탑승 피드백)
+                                Text(t.trainNo).font(.system(size: 14, weight: .semibold).monospacedDigit()).foregroundStyle(Color(hex: 0x2A3348))
                             }
                             .offset(x: 58, y: p * gap + 2)
                         }
